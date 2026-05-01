@@ -62,61 +62,61 @@
 
 | 防御 | 崇拜 | 陨星 |
 |------|------|------|
-| ![DefendRegent](RegentFemPortraits/card_portraits/regent/DefendRegent.png =120x160) | ![Venerate](RegentFemPortraits/card_portraits/regent/Venerate.png =120x160) | ![FallingStar](RegentFemPortraits/card_portraits/regent/FallingStar.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/DefendRegent.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Venerate.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/FallingStar.png" width="120" height="160"> |
 
 ### 储君普通/稀有牌 (1/5)
 
 | 下去！ | 冲锋！！ | 群星之子 | 群星斗篷 |
 |--------|----------|----------|----------|
-| ![Begone](RegentFemPortraits/card_portraits/regent/Begone.png =120x160) | ![Charge](RegentFemPortraits/card_portraits/regent/Charge.png =120x160) | ![ChildOfTheStars](RegentFemPortraits/card_portraits/regent/ChildOfTheStars.png =120x160) | ![CloakOfStars](RegentFemPortraits/card_portraits/regent/CloakOfStars.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/Begone.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Charge.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/ChildOfTheStars.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/CloakOfStars.png" width="120" height="160"> |
 
 | 征服者 | 汇流 | 宇宙冷漠 | 抉择，抉择 |
 |--------|------|----------|------------|
-| ![Conqueror](RegentFemPortraits/card_portraits/regent/Conqueror.png =120x160) | ![Convergence](RegentFemPortraits/card_portraits/regent/Convergence.png =120x160) | ![CosmicIndifference](RegentFemPortraits/card_portraits/regent/CosmicIndifference.png =120x160) | ![DecisionsDecisions](RegentFemPortraits/card_portraits/regent/DecisionsDecisions.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/Conqueror.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Convergence.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/CosmicIndifference.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/DecisionsDecisions.png" width="120" height="160"> |
 
 | 辉光 | 天际钻头 | 王者之踢 | 王者之拳 |
 |------|----------|----------|----------|
-| ![Glow](RegentFemPortraits/card_portraits/regent/Glow.png =120x160) | ![HeavenlyDrill](RegentFemPortraits/card_portraits/regent/HeavenlyDrill.png =120x160) | ![KinglyKick](RegentFemPortraits/card_portraits/regent/KinglyKick.png =120x160) | ![KinglyPunch](RegentFemPortraits/card_portraits/regent/KinglyPunch.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/Glow.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/HeavenlyDrill.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/KinglyKick.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/KinglyPunch.png" width="120" height="160"> |
 
 | 如此甚好 | 王之凝视 | 中子护盾 | 星星点点 |
 |----------|----------|----------|----------|
-| ![MakeItSo](RegentFemPortraits/card_portraits/regent/MakeItSo.png =120x160) | ![MonarchsGaze](RegentFemPortraits/card_portraits/regent/MonarchsGaze.png =120x160) | ![NeutronAegis](RegentFemPortraits/card_portraits/regent/NeutronAegis.png =120x160) | ![Patter](RegentFemPortraits/card_portraits/regent/Patter.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/MakeItSo.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/MonarchsGaze.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/NeutronAegis.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Patter.png" width="120" height="160"> |
 
 | 招架 | 预言 | 类星体 | 辐射 |
 |------|------|--------|------|
-| ![Parry](RegentFemPortraits/card_portraits/regent/Parry.png =120x160) | ![Prophesize](RegentFemPortraits/card_portraits/regent/Prophesize.png =120x160) | ![Quasar](RegentFemPortraits/card_portraits/regent/Quasar.png =120x160) | ![Radiate](RegentFemPortraits/card_portraits/regent/Radiate.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/Parry.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Prophesize.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Quasar.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Radiate.png" width="120" height="160"> |
 
 | 淬炼刀刃 | 剑圣 | 铸剑者 | 暴政 |
 |----------|------|--------|------|
-| ![RefineBlade](RegentFemPortraits/card_portraits/regent/RefineBlade.png =120x160) | ![SwordSage](RegentFemPortraits/card_portraits/regent/SwordSage.png =120x160) | ![TheSmith](RegentFemPortraits/card_portraits/regent/TheSmith.png =120x160) | ![Tyranny](RegentFemPortraits/card_portraits/regent/Tyranny.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/RefineBlade.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/SwordSage.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/TheSmith.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Tyranny.png" width="120" height="160"> |
 
 | 虚空形态 | 战火铸就 | 伽马爆破 | 流光溢彩 |
 |----------|----------|----------|----------|
-| ![VoidForm](RegentFemPortraits/card_portraits/regent/VoidForm.png =120x160) | ![WroughtInWar](RegentFemPortraits/card_portraits/regent/WroughtInWar.png =120x160) | ![GammaBlast](RegentFemPortraits/card_portraits/regent/GammaBlast.png =120x160) | ![Glitterstream](RegentFemPortraits/card_portraits/regent/Glitterstream.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/VoidForm.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/WroughtInWar.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/GammaBlast.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Glitterstream.png" width="120" height="160"> |
 
 ### 储君普通/稀有牌 (2/5)
 
 | 传承之锤 | 创世之柱 | 独白 | 武器库 |
 |----------|----------|------|--------|
-| ![HeirloomHammer](RegentFemPortraits/card_portraits/regent/HeirloomHammer.png =120x160) | ![PillarOfCreation](RegentFemPortraits/card_portraits/regent/PillarOfCreation.png =120x160) | ![Monologue](RegentFemPortraits/card_portraits/regent/Monologue.png =120x160) | ![Arsenal](RegentFemPortraits/card_portraits/regent/Arsenal.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/HeirloomHammer.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/PillarOfCreation.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Monologue.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Arsenal.png" width="120" height="160"> |
 
 | 锻打成型 | 大爆炸 | 新生之喜 | 天穹之力 |
 |----------|--------|----------|----------|
-| ![BeatIntoShape](RegentFemPortraits/card_portraits/regent/BeatIntoShape.png =120x160) | ![BigBang](RegentFemPortraits/card_portraits/regent/BigBang.png =120x160) | ![BundleOfJoy](RegentFemPortraits/card_portraits/regent/BundleOfJoy.png =120x160) | ![CelestialMight](RegentFemPortraits/card_portraits/regent/CelestialMight.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/BeatIntoShape.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/BigBang.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/BundleOfJoy.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/CelestialMight.png" width="120" height="160"> |
 
 | 收集光辉 | 决胜一击 | 君权自授 | 胜券在王 |
 |----------|----------|----------|----------|
-| ![GatherLight](RegentFemPortraits/card_portraits/regent/GatherLight.png =120x160) | ![KnockoutBlow](RegentFemPortraits/card_portraits/regent/KnockoutBlow.png =120x160) | ![ManifestAuthority](RegentFemPortraits/card_portraits/regent/ManifestAuthority.png =120x160) | ![RoyalGamble](RegentFemPortraits/card_portraits/regent/RoyalGamble.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/GatherLight.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/KnockoutBlow.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/ManifestAuthority.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/RoyalGamble.png" width="120" height="160"> |
 
 | 明耀打击 | 地形改造 | 星尘 |
 |----------|----------|------|
-| ![ShiningStrike](RegentFemPortraits/card_portraits/regent/ShiningStrike.png =120x160) | ![Terraforming](RegentFemPortraits/card_portraits/regent/Terraforming.png =120x160) | ![Stardust](RegentFemPortraits/card_portraits/regent/Stardust.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/ShiningStrike.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Terraforming.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Stardust.png" width="120" height="160"> |
 
 ### 棺者卡牌
 
 | 挽歌 | 恐惧 | 重构 | 灵魂风暴 | 收割 |
 |------|------|------|----------|------|
-| ![Dirge](RegentFemPortraits/card_portraits/regent/Dirge.png =120x160) | ![Fear](RegentFemPortraits/card_portraits/regent/Fear.png =120x160) | ![Transfigure](RegentFemPortraits/card_portraits/regent/Transfigure.png =120x160) | ![SoulStorm](RegentFemPortraits/card_portraits/regent/SoulStorm.png =120x160) | ![Reap](RegentFemPortraits/card_portraits/regent/Reap.png =120x160) |
+| <img src="RegentFemPortraits/card_portraits/regent/Dirge.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Fear.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Transfigure.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/SoulStorm.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Reap.png" width="120" height="160"> |
 
 ---
 
