@@ -64,7 +64,7 @@
 |------|------|------|
 | <img src="RegentFemPortraits/card_portraits/regent/DefendRegent.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Venerate.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/FallingStar.png" width="120" height="160"> |
 
-### 储君普通/稀有牌 (1/5)
+### 储君普通/稀有牌
 
 | 下去！ | 冲锋！！ | 群星之子 | 群星斗篷 |
 |--------|----------|----------|----------|
@@ -93,8 +93,6 @@
 | 虚空形态 | 战火铸就 | 伽马爆破 | 流光溢彩 |
 |----------|----------|----------|----------|
 | <img src="RegentFemPortraits/card_portraits/regent/VoidForm.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/WroughtInWar.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/GammaBlast.png" width="120" height="160"> | <img src="RegentFemPortraits/card_portraits/regent/Glitterstream.png" width="120" height="160"> |
-
-### 储君普通/稀有牌 (2/5)
 
 | 传承之锤 | 创世之柱 | 独白 | 武器库 |
 |----------|----------|------|--------|
