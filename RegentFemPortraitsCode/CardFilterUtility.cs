@@ -4,27 +4,15 @@ using MegaCrit.Sts2.Core.Nodes.Cards;
 
 namespace RegentFemPortraits.RegentFemPortraitsCode;
 
-/// <summary>
-/// 负责处理替换卡图在不同卡牌节点上的平滑过滤。
-/// 之所以把这部分逻辑单独拆到本文件，是因为仅替换立绘资源还不够：
-/// 当卡牌在手牌、小卡、放大预览等场景中频繁缩放时，默认过滤模式容易让边缘出现明显锯齿。
-/// 因此这里会在相关节点初始化或重载时，把贴图过滤方式统一切换为更适合预览的平滑模式。
-/// </summary>
 [HarmonyPatch(typeof(NTinyCard), nameof(NTinyCard._Ready))]
 public static class TinyCardTextureFilterPatch
 {
-  /// <summary>
-  /// 小卡片节点创建完成后，若当前显示的是本模组替换立绘，则立即应用平滑过滤。
-  /// </summary>
   static void Postfix(NTinyCard __instance)
   {
     CardFilterUtility.TryApplyTinyCardPortraitFilters(__instance);
   }
 }
 
-/// <summary>
-/// 当大卡片第一次创建完成时，为替换立绘应用抗锯齿过滤，减少预览时的锯齿感。
-/// </summary>
 [HarmonyPatch(typeof(NCard), nameof(NCard._Ready))]
 public static class CardTextureFilterPatch
 {
@@ -34,9 +22,6 @@ public static class CardTextureFilterPatch
   }
 }
 
-/// <summary>
-/// 当大卡片因状态变化或重新生成而刷新时，重新补上平滑过滤，避免刷新后退回到默认锯齿渲染。
-/// </summary>
 [HarmonyPatch(typeof(NCard), "Reload")]
 public static class CardTextureFilterReloadPatch
 {
@@ -46,11 +31,6 @@ public static class CardTextureFilterReloadPatch
   }
 }
 
-/// <summary>
-/// 提供卡牌立绘抗锯齿相关的公共方法。
-/// 主要做法是把相关节点的 <see cref="CanvasItem.TextureFilter"/> 改为带 Mipmap 的线性过滤，
-/// 让替换卡图在缩小、放大和悬停预览时都尽量保持平滑。
-/// </summary>
 public static class CardFilterUtility
 {
   private static readonly string[] NCardPortraitNodePaths =
@@ -64,10 +44,6 @@ public static class CardFilterUtility
         "%PortraitCanvasGroup",
     };
 
-  /// <summary>
-  /// 尝试对大卡片应用平滑过滤。
-  /// 只有当前卡面来自本模组替换立绘时才会生效，避免影响原版或其他模组的卡图。
-  /// </summary>
   public static bool TryApplyNCardPortraitFilters(NCard card)
   {
     if (!CardPortraitReplacementPatch.IsModPortraitModel(card.Model))
@@ -79,10 +55,6 @@ public static class CardFilterUtility
     return true;
   }
 
-  /// <summary>
-  /// 为大卡片常用的立绘节点逐一设置平滑过滤。
-  /// 同时递归处理 PortraitCanvasGroup 下的额外绘制节点，防止局部节点仍沿用默认最近邻采样。
-  /// </summary>
   public static void ApplyNCardPortraitFilters(NCard card)
   {
     foreach (string nodePath in NCardPortraitNodePaths)
@@ -100,36 +72,24 @@ public static class CardFilterUtility
     }
   }
 
-  /// <summary>
-  /// 尝试为小卡片的头像区域应用平滑过滤。
-  /// 小卡在卡组、手牌和奖励界面里缩放更频繁，因此也更容易出现锯齿。
-  /// </summary>
   public static bool TryApplyTinyCardPortraitFilters(NTinyCard tinyCard)
   {
     TextureRect? portrait = tinyCard.GetNodeOrNull<TextureRect>("%Portrait");
     if (portrait == null)
     {
-      MainFile.Logger.Info($"[Filter] TinyCard portrait is null");
-      return false;
-    }
-    
-    MainFile.Logger.Info($"[Filter] TinyCard Texture: {portrait.Texture?.ResourcePath ?? "null"}");
-    
-    if (!CardPortraitReplacementPatch.IsModPortraitTexture(portrait.Texture))
-    {
-      MainFile.Logger.Info($"[Filter] Not a mod portrait texture");
       return false;
     }
 
-    MainFile.Logger.Info($"[Filter] Applying TinyCard Filters to modded card portrait!");
+    if (!CardPortraitReplacementPatch.IsModPortraitTexture(portrait.Texture))
+    {
+      return false;
+    }
+
     ApplyFilterToNode(portrait);
     ApplyFilterToNode(tinyCard.GetNodeOrNull<CanvasItem>("%PortraitShadow"));
     return true;
   }
 
-  /// <summary>
-  /// 递归处理某个节点及其全部子节点，确保相关画布项都统一使用平滑过滤。        
-  /// </summary>
   private static void ApplySmoothFilteringRecursively(Node node)
   {
     ApplyFilterToNode(node as CanvasItem);
@@ -140,32 +100,14 @@ public static class CardFilterUtility
     }
   }
 
-  /// <summary>
-  /// 为单个画布节点设置首选过滤模式。
-  /// 根据 ModConfig.EnableAntialiasingFilter 和 SelectedFilterMode 决定实际应用的过滤模式。
-  /// </summary>
-  private static void ApplyFilterToNode(CanvasItem? canvasItem)
+  private static void 
+  (CanvasItem? canvasItem)
   {
     if (canvasItem == null)
     {
       return;
     }
 
-    CanvasItem.TextureFilterEnum filterToApply = ModConfig.GetGodotFilterMode();
-    
-    MainFile.Logger.Info($"[Filter] Node: {canvasItem.Name}, Type: {canvasItem.GetType().Name}");
-    MainFile.Logger.Info($"[Filter] Current filter: {canvasItem.TextureFilter} (value={(int)canvasItem.TextureFilter})");
-    MainFile.Logger.Info($"[Filter] EnableAntialiasingFilter: {ModConfig.EnableAntialiasingFilter}");
-    MainFile.Logger.Info($"[Filter] SelectedFilterMode: {ModConfig.SelectedFilterMode}");
-    MainFile.Logger.Info($"[Filter] Filter to apply: {(int)filterToApply} ({filterToApply})");
-    
-    canvasItem.TextureFilter = filterToApply;
-    
-    MainFile.Logger.Info($"[Filter] After setting - Filter is now: {canvasItem.TextureFilter} (value={(int)canvasItem.TextureFilter})");
-    
-    if (canvasItem is TextureRect textureRect && textureRect.Texture != null)
-    {
-      MainFile.Logger.Info($"[Filter] Texture: {textureRect.Texture.ResourcePath}, Size: {textureRect.Texture.GetWidth()}x{textureRect.Texture.GetHeight()}");
-    }
+    canvasItem.TextureFilter = (CanvasItem.TextureFilterEnum)5;
   }
 }
