@@ -20,12 +20,12 @@ public static class CardPortraitReplacementPatch
 
     private static readonly Dictionary<Type, string> Replacements = new()
     {
-        // 基础牌
+        // 储君基础牌
         { typeof(DefendRegent), "res://RegentFemPortraits/card_portraits/regent/DefendRegent.png" }, // 防御
         { typeof(Venerate), "res://RegentFemPortraits/card_portraits/regent/Venerate.png" }, // 崇拜
         { typeof(FallingStar), "res://RegentFemPortraits/card_portraits/regent/FallingStar.png" }, // 陨星
 
-        // 普通牌
+        // 储君普通牌
         { typeof(Begone), "res://RegentFemPortraits/card_portraits/regent/Begone.png" }, // 下去！
         { typeof(Charge), "res://RegentFemPortraits/card_portraits/regent/Charge.png" }, // 冲锋！！
         { typeof(ChildOfTheStars), "res://RegentFemPortraits/card_portraits/regent/ChildOfTheStars.png" }, // 群星之子
@@ -52,8 +52,11 @@ public static class CardPortraitReplacementPatch
         { typeof(Tyranny), "res://RegentFemPortraits/card_portraits/regent/Tyranny.png" }, // 暴政
         { typeof(VoidForm), "res://RegentFemPortraits/card_portraits/regent/VoidForm.png" }, // 虚空形态
         { typeof(WroughtInWar), "res://RegentFemPortraits/card_portraits/regent/WroughtInWar.png" }, // 战火铸就
-
-        // 稀有牌
+        { typeof(GammaBlast), "res://RegentFemPortraits/card_portraits/regent/GammaBlast.png" }, // 伽马爆破
+        { typeof(Glitterstream), "res://RegentFemPortraits/card_portraits/regent/Glitterstream.png" }, // 流光溢彩
+        { typeof(HeirloomHammer), "res://RegentFemPortraits/card_portraits/regent/HeirloomHammer.png" }, // 创世之柱
+        { typeof(PillarOfCreation), "res://RegentFemPortraits/card_portraits/regent/PillarOfCreation.png" }, // 传承之锤
+        { typeof(Monologue), "res://RegentFemPortraits/card_portraits/regent/Monologue.png" }, // 独白
         { typeof(Arsenal), "res://RegentFemPortraits/card_portraits/regent/Arsenal.png" }, // 武器库
         { typeof(BeatIntoShape), "res://RegentFemPortraits/card_portraits/regent/BeatIntoShape.png" }, // 锻打成型
         { typeof(BigBang), "res://RegentFemPortraits/card_portraits/regent/BigBang.png" }, // 大爆炸
@@ -65,6 +68,14 @@ public static class CardPortraitReplacementPatch
         { typeof(RoyalGamble), "res://RegentFemPortraits/card_portraits/regent/RoyalGamble.png" }, // 胜券在王
         { typeof(ShiningStrike), "res://RegentFemPortraits/card_portraits/regent/ShiningStrike.png" }, // 明耀打击
         { typeof(Terraforming), "res://RegentFemPortraits/card_portraits/regent/Terraforming.png" }, // 地形改造
+        { typeof(Stardust), "res://RegentFemPortraits/card_portraits/regent/Stardust.png" }, // 星尘
+
+        // 棺者普通牌
+        { typeof(Dirge), "res://RegentFemPortraits/card_portraits/regent/Dirge.png" }, // 挽歌
+        { typeof(Transfigure), "res://RegentFemPortraits/card_portraits/regent/Transfigure.png" }, // 重构
+        { typeof(Fear), "res://RegentFemPortraits/card_portraits/regent/Fear.png" }, // 恐惧
+        { typeof(SoulStorm), "res://RegentFemPortraits/card_portraits/regent/SoulStorm.png" }, // 灵魂风暴
+        { typeof(Reap), "res://RegentFemPortraits/card_portraits/regent/Reap.png" }, // 收割
     };
 
     // 缓存已经生成过 Mipmap 的替换贴图，避免每次读取卡图时重复解码和重复生成。
@@ -121,7 +132,7 @@ public static class CardPortraitReplacementPatch
 
     /// <summary>
     /// 加载并缓存替换立绘。
-    /// 会尽量优先创建带 Mipmap 的纹理，以便在卡牌缩放和放大预览时减少锯齿。
+    /// 直接使用原始纹理以保留完整的 Mipmap 链，避免 AtlasTexture 包装导致 Mipmap 映射错误。
     /// </summary>
     private static Texture2D? LoadReplacementTexture(string path)
     {
@@ -141,16 +152,25 @@ public static class CardPortraitReplacementPatch
             return null;
         }
 
-        // 把从引擎中读取的拥有原生Mipmap和VRAM压缩的纹理包装成 AtlasTexture，以满足游戏原版代码的强转检查。
-        AtlasTexture pseudoAtlas = new AtlasTexture
+        int width = sourceTexture.GetWidth();
+        int height = sourceTexture.GetHeight();
+        
+        MainFile.Logger.Info($"[Portrait] Loaded texture: {path}, Size: {width}x{height}");
+        
+        // 检查纹理尺寸是否是 2 的幂次方
+        if (!IsPowerOfTwo(width) || !IsPowerOfTwo(height))
         {
-            Atlas = sourceTexture,
-            Region = new Rect2(0, 0, sourceTexture.GetWidth(), sourceTexture.GetHeight())
-        };
+            MainFile.Logger.Warn($"[Portrait] WARNING: Texture size {width}x{height} is not power of two! Mipmap quality may be degraded. Consider using 256x256, 512x512, or 1024x1024.");
+        }
 
-        ReplacementTextureCache[path] = pseudoAtlas;
-        ReplacementTextureIds.Add(pseudoAtlas.GetInstanceId());
-        return pseudoAtlas;
+        ReplacementTextureCache[path] = sourceTexture;
+        ReplacementTextureIds.Add(sourceTexture.GetInstanceId());
+        return sourceTexture;
+    }
+    
+    private static bool IsPowerOfTwo(int value)
+    {
+        return value > 0 && (value & (value - 1)) == 0;
     }
 
     /// <summary>

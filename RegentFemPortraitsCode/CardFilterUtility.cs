@@ -53,15 +53,14 @@ public static class CardTextureFilterReloadPatch
 /// </summary>
 public static class CardFilterUtility
 {
-  // Godot 4 中数值 6 对应“CanvasItem.TextureFilterEnum.LinearWithMipmapsAnisotropic”。
-  // 开启各向异性过滤加线性 Mipmap，能最大程度消除缩放预览时的锯齿感和线条抖动。
-  private const CanvasItem.TextureFilterEnum PreferredFilter = (CanvasItem.TextureFilterEnum)6;
-
   private static readonly string[] NCardPortraitNodePaths =
   {
         "%Portrait",
         "%AncientPortrait",
-        "%PortraitBorder",
+    };
+
+  private static readonly string[] NCardCanvasGroupPaths =
+  {
         "%PortraitCanvasGroup",
     };
 
@@ -91,10 +90,13 @@ public static class CardFilterUtility
       ApplyFilterToNode(card.GetNodeOrNull<CanvasItem>(nodePath));
     }
 
-    CanvasItem? portraitCanvas = card.GetNodeOrNull<CanvasItem>("%PortraitCanvasGroup");
-    if (portraitCanvas != null)
+    foreach (string nodePath in NCardCanvasGroupPaths)
     {
-      ApplySmoothFilteringRecursively(portraitCanvas);
+      CanvasItem? canvasItem = card.GetNodeOrNull<CanvasItem>(nodePath);
+      if (canvasItem != null)
+      {
+        ApplySmoothFilteringRecursively(canvasItem);
+      }
     }
   }
 
@@ -105,8 +107,17 @@ public static class CardFilterUtility
   public static bool TryApplyTinyCardPortraitFilters(NTinyCard tinyCard)
   {
     TextureRect? portrait = tinyCard.GetNodeOrNull<TextureRect>("%Portrait");
-    if (portrait == null || !CardPortraitReplacementPatch.IsModPortraitTexture(portrait.Texture))
+    if (portrait == null)
     {
+      MainFile.Logger.Info($"[Filter] TinyCard portrait is null");
+      return false;
+    }
+    
+    MainFile.Logger.Info($"[Filter] TinyCard Texture: {portrait.Texture?.ResourcePath ?? "null"}");
+    
+    if (!CardPortraitReplacementPatch.IsModPortraitTexture(portrait.Texture))
+    {
+      MainFile.Logger.Info($"[Filter] Not a mod portrait texture");
       return false;
     }
 
@@ -131,6 +142,7 @@ public static class CardFilterUtility
 
   /// <summary>
   /// 为单个画布节点设置首选过滤模式。
+  /// 根据 ModConfig.EnableAntialiasingFilter 和 SelectedFilterMode 决定实际应用的过滤模式。
   /// </summary>
   private static void ApplyFilterToNode(CanvasItem? canvasItem)
   {
@@ -139,7 +151,21 @@ public static class CardFilterUtility
       return;
     }
 
-    MainFile.Logger.Info($"[Filter] Setting filter to: {PreferredFilter}");
-    canvasItem.TextureFilter = PreferredFilter;
+    CanvasItem.TextureFilterEnum filterToApply = ModConfig.GetGodotFilterMode();
+    
+    MainFile.Logger.Info($"[Filter] Node: {canvasItem.Name}, Type: {canvasItem.GetType().Name}");
+    MainFile.Logger.Info($"[Filter] Current filter: {canvasItem.TextureFilter} (value={(int)canvasItem.TextureFilter})");
+    MainFile.Logger.Info($"[Filter] EnableAntialiasingFilter: {ModConfig.EnableAntialiasingFilter}");
+    MainFile.Logger.Info($"[Filter] SelectedFilterMode: {ModConfig.SelectedFilterMode}");
+    MainFile.Logger.Info($"[Filter] Filter to apply: {(int)filterToApply} ({filterToApply})");
+    
+    canvasItem.TextureFilter = filterToApply;
+    
+    MainFile.Logger.Info($"[Filter] After setting - Filter is now: {canvasItem.TextureFilter} (value={(int)canvasItem.TextureFilter})");
+    
+    if (canvasItem is TextureRect textureRect && textureRect.Texture != null)
+    {
+      MainFile.Logger.Info($"[Filter] Texture: {textureRect.Texture.ResourcePath}, Size: {textureRect.Texture.GetWidth()}x{textureRect.Texture.GetHeight()}");
+    }
   }
 }
