@@ -4,22 +4,32 @@
 
 ## 关于这个模组
 
-本模组将储君角色的卡牌立绘替换为精美的二次元风格插画。除了卡图替换，模组还应用了轻量化的纹理重渲染/平滑处理，有助于减少卡牌在缩放、悬停或在大预览视图中打开时的锯齿边缘。
+本模组将储君角色的卡牌立绘替换为二次元风格插画。除了卡图替换，模组还应用了轻量化的纹理重渲染/平滑处理，有助于减少卡牌在缩放、悬停或在大预览视图中打开时的锯齿边缘。
 
 目前已替换 **51 张卡牌**：
 - 3 张储君基础牌
 - 43 张储君普通/稀有牌
 - 5 张棺者卡牌
 
+## 🎲 支持作者
+- [爱发电](https://ifdian.net/a/xppppx)
+- [Mod 演示视频](https://www.bilibili.com/video/BV1LXXDBeEAG)
+
+## Credits
+
+- **卡图绘制**: [失地骑士Hatk](https://space.bilibili.com/3546631035161405)
+- **模组编程**: [绫末LingEnd](https://space.bilibili.com/187863463)
+
+
 ## 重要说明
 
 1. 本模组是早期预览版本。如果您遇到任何问题，请提交 issue 或联系 @绫末LingEnd。
-2. 对于模组存档相关问题，请查看相关指南或安装 save unification mod。
+2. 模组存档相关问题请查看相关教程，或安装 [存档统一模组](https://www.nexusmods.com/slaythespire2/mods/6)。
 3. 本模组不影响在线游戏玩法。这是一个本地模组，您的在线队友不需要安装它。
 
 ## 依赖要求
 
-本模组需要安装 **BaseLib 3.1.0** 或更高版本作为前置依赖。
+本模组需要安装 **BaseLib 3.1.0**[通过github](https://github.com/Alchyr/BaseLib-StS2) \ [通过nexusmods](https://www.nexusmods.com/slaythespire2/mods/103) 或更高版本作为前置依赖。
 
 - **BaseLib**: 提供模组配置框架和本地化支持
 
@@ -41,18 +51,6 @@
 - **线性+Mipmap**: 平滑边缘，减少锯齿
 - **最近邻+各向异性**: 高清晰度，斜视角保持清晰
 - **线性+各向异性**: 最平滑的过滤效果，推荐用于缩小预览
-
-## 致谢
-
-### Credits
-
-- **卡图绘制**: [失地骑士Hatk](https://space.bilibili.com/3546631035161405)
-- **模组编程**: [绫末LingEnd](https://space.bilibili.com/187863463)
-
-### Special Thanks
-
-- @GhoulEmperor
-- @失地骑士Hatk
 
 ## 画廊预览
 
@@ -119,6 +117,4 @@
 ---
 
 **版本**: v0.6.0
-**作者**: [失地骑士HATK](https://space.bilibili.com/3546631035161405) & [绫末LingEnd](https://space.bilibili.com/187863463)
-**游戏**: Slay the Spire 2 (杀戮尖塔2)
-**依赖**: BaseLib 3.1.0+
+**游戏**: Slay the Spire 2 (杀戮尖塔2)0.103.2
