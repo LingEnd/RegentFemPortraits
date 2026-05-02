@@ -36,7 +36,27 @@ jobs:
           mkdir -p RegentFemPortraits/card_portraits/regent/
           IMAGE_EXT=$(echo "${{ github.event.inputs.image_url }}" | grep -o '\.[a-zA-Z]*$' || echo '.png')
           IMAGE_PATH="RegentFemPortraits/card_portraits/regent/${{ github.event.inputs.card_name }}${IMAGE_EXT}"
-          curl -L "${{ github.event.inputs.image_url }}" -o "${IMAGE_PATH}"
+
+          echo "正在下载图片..."
+          if ! curl -L --fail --retry 3 --retry-delay 2 \
+              "${{ github.event.inputs.image_url }}" \
+              -o "${IMAGE_PATH}"; then
+            echo "错误：图片下载失败，请检查URL是否有效"
+            exit 1
+          fi
+
+          if [ ! -s "${IMAGE_PATH}" ]; then
+            echo "错误：下载的文件为空"
+            exit 1
+          fi
+
+          if ! file "${IMAGE_PATH}" | grep -qE 'image|JPEG|PNG|GIF|WebP'; then
+            echo "错误：下载的文件不是有效的图片格式"
+            rm -f "${IMAGE_PATH}"
+            exit 1
+          fi
+
+          echo "图片下载成功：${IMAGE_PATH}"
           echo "image_path=${IMAGE_PATH}" >> $GITHUB_OUTPUT
           echo "image_ext=${IMAGE_EXT}" >> $GITHUB_OUTPUT
 
