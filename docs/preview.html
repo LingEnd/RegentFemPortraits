@@ -4,29 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RegentFemPortraits - 卡牌预览</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kreon:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            font-family: 'Kreon', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 2rem;
         }
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1600px; margin: 0 auto; }
+
         .header {
-            text-align: center;
-            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255,215,0,0.3);
         }
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-        }
+        h1 { color: #ffd700; font-size: 2rem; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+        .nav-links { display: flex; gap: 1rem; }
         .nav-links a {
             padding: 0.5rem 1rem;
             border-radius: 8px;
@@ -36,302 +34,402 @@
             font-weight: 600;
             transition: all 0.2s;
         }
-        .nav-links a:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        h1 { 
-            color: #ffd700; 
-            font-size: 2.5rem; 
-            text-shadow: 0 0 20px rgba(255,215,0,0.5);
-        }
-        .subtitle { color: #a0aec0; margin-top: 0.5rem; }
+        .nav-links a:hover { background: rgba(255,255,255,0.2); }
 
-        /* Filter Bar */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
+        /* Upload Section */
+        .upload-section {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,215,0,0.2);
         }
-        .filter-bar select, .filter-bar input {
+        .upload-section h2 { color: #ffd700; margin-bottom: 1rem; }
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .upload-box {
+            border: 3px dashed rgba(255,215,0,0.5);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.2);
+        }
+        .upload-box:hover, .upload-box.dragover {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.1);
+        }
+        .upload-box input { display: none; }
+        .upload-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .upload-hint { color: #a0aec0; font-size: 0.875rem; }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .control-group label { color: #ffd700; font-weight: 600; }
+        select, input[type="text"] {
             padding: 0.75rem 1rem;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,215,0,0.3);
             border-radius: 8px;
             background: rgba(0,0,0,0.3);
             color: white;
+            font-family: inherit;
             font-size: 1rem;
-            min-width: 150px;
         }
-        .filter-bar select option { background: #1a1a2e; }
-        .filter-bar input::placeholder { color: #6b7280; }
+        select option { background: #1a1a2e; }
 
-        /* Card Grid */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem;
+        /* Game-Style Card Container */
+        .card-preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, #1e3a5f 0%, #0a1628 100%);
+            border-radius: 16px;
+            min-height: 500px;
         }
 
-        /* Game-Style Card */
+        /* Game Card - Exact proportions from game */
         .game-card {
             position: relative;
+            width: 300px;
+            height: 422px;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.8));
+        }
+
+        /* Card Shadow */
+        .card-shadow {
+            position: absolute;
+            width: 300px;
+            height: 422px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 422"><filter id="shadow"><feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dx="0" dy="8" result="offsetblur"/><feFlood flood-color="rgba(0,0,0,0.5)"/><feComposite in2="offsetblur" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><rect width="300" height="422" fill="%23666" filter="url(%23shadow)"/></svg>');
+            opacity: 0.6;
+        }
+
+        /* Card Frame (different for each type) */
+        .card-frame {
+            position: absolute;
             width: 100%;
-            aspect-ratio: 3/4;
+            height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        .frame-attack {
+            background: linear-gradient(180deg, #8b1a1a 0%, #5c1010 50%, #3d0a0a 100%);
+            border: 4px solid #b22222;
             border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            transform-style: preserve-3d;
+            box-shadow: inset 0 0 20px rgba(178,34,34,0.5), 0 0 15px rgba(178,34,34,0.3);
         }
-        .game-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            z-index: 10;
+        .frame-skill {
+            background: linear-gradient(180deg, #1a3a8b 0%, #10285c 50%, #0a1a3d 100%);
+            border: 4px solid #2244b2;
+            border-radius: 12px;
+            box-shadow: inset 0 0 20px rgba(34,68,178,0.5), 0 0 15px rgba(34,68,178,0.3);
         }
-
-        /* Card Border by Rarity */
-        .card-common {
-            box-shadow: 0 4px 20px rgba(156, 163, 175, 0.4),
-                        inset 0 0 30px rgba(156, 163, 175, 0.1);
-            border: 3px solid #9ca3af;
+        .frame-power {
+            background: linear-gradient(180deg, #1a8b3a 0%, #105c24 50%, #0a3d15 100%);
+            border: 4px solid #22b244;
+            border-radius: 12px;
+            box-shadow: inset 0 0 20px rgba(34,178,68,0.5), 0 0 15px rgba(34,178,68,0.3);
         }
-        .card-uncommon {
-            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4),
-                        inset 0 0 30px rgba(34, 197, 94, 0.1);
-            border: 3px solid #22c55e;
+        .frame-ancient {
+            background: linear-gradient(180deg, #8b6914 0%, #5c4510 50%, #3d2d0a 100%);
+            border: 4px solid #ffd700;
+            border-radius: 12px;
+            box-shadow: inset 0 0 30px rgba(255,215,0,0.4), 0 0 25px rgba(255,215,0,0.5);
+            animation: ancientGlow 2s ease-in-out infinite;
         }
-        .card-rare {
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4),
-                        inset 0 0 30px rgba(59, 130, 246, 0.1);
-            border: 3px solid #3b82f6;
-        }
-        .card-starter {
-            box-shadow: 0 4px 20px rgba(107, 114, 128, 0.4),
-                        inset 0 0 30px rgba(107, 114, 128, 0.1);
-            border: 3px solid #6b7280;
-            background: linear-gradient(145deg, #2d2d2d, #1f1f1f);
-        }
-        .card-ancient {
-            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5),
-                        inset 0 0 30px rgba(255, 215, 0, 0.2);
-            border: 3px solid #ffd700;
-            background: linear-gradient(145deg, #2a2a1a, #1a1a10);
+        @keyframes ancientGlow {
+            0%, 100% { box-shadow: inset 0 0 30px rgba(255,215,0,0.4), 0 0 25px rgba(255,215,0,0.5); }
+            50% { box-shadow: inset 0 0 40px rgba(255,215,0,0.6), 0 0 35px rgba(255,215,0,0.7); }
         }
 
-        /* Card Content */
+        /* Card Inner Content */
         .card-inner {
             position: absolute;
-            inset: 4px;
-            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
             border-radius: 8px;
-            display: flex;
-            flex-direction: column;
             overflow: hidden;
+            background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
         }
 
-        /* Card Header */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            background: rgba(0,0,0,0.3);
-        }
-        .card-cost {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #1a1a2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-            color: #ffd700;
-            border: 2px solid #ffd700;
-        }
-        .card-type {
-            font-size: 10px;
-            padding: 2px 8px;
+        /* Portrait Area */
+        .portrait-container {
+            position: absolute;
+            top: 8px;
+            left: 25px;
+            width: 250px;
+            height: 190px;
             border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .type-attack { background: #ef4444; color: white; }
-        .type-skill { background: #3b82f6; color: white; }
-        .type-power { background: #8b5cf6; color: white; }
-        .type-energy { background: #eab308; color: #1a1a2e; }
-
-        /* Card Portrait */
-        .card-portrait {
-            flex: 1;
-            position: relative;
-            background: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             overflow: hidden;
+            background: linear-gradient(180deg, #1e3a5f 0%, #0f2744 100%);
         }
-        .card-portrait img {
-            max-width: 100%;
-            max-height: 100%;
+        .portrait-image {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
         }
         .portrait-placeholder {
-            width: 80%;
-            height: 80%;
-            background: linear-gradient(145deg, #2d3748, #1a202c);
-            border-radius: 8px;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #4a5568;
-            font-size: 10px;
+            font-size: 0.875rem;
             text-align: center;
-            word-break: break-word;
-            padding: 10px;
+            padding: 1rem;
         }
 
-        /* Card Title */
-        .card-title {
-            padding: 8px 10px;
-            text-align: center;
-            background: rgba(0,0,0,0.4);
-        }
-        .card-title-text {
-            font-weight: bold;
-            color: #f7fafc;
-            font-size: 12px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* Card Description */
-        .card-desc {
-            padding: 8px 10px;
-            background: rgba(0,0,0,0.3);
-            flex-shrink: 0;
-        }
-        .card-desc-text {
-            color: #a0aec0;
-            font-size: 9px;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Card Pool Badge */
-        .card-pool-badge {
+        /* Portrait Border */
+        .portrait-border {
             position: absolute;
-            top: -3px;
-            right: -3px;
-            font-size: 9px;
-            padding: 3px 8px;
-            border-radius: 0 8px 0 8px;
-            color: white;
-            font-weight: bold;
-            text-transform: uppercase;
+            top: 4px;
+            left: 21px;
+            width: 258px;
+            height: 198px;
+            border: 3px solid rgba(0,0,0,0.5);
+            border-radius: 6px;
+            pointer-events: none;
         }
-        .pool-regent { background: #8b5cf6; }
-        .pool-ironclad { background: #ef4444; }
-        .pool-silent { background: #22c55e; }
-        .pool-defect { background: #3b82f6; }
-        .pool-watcher { background: #ec4899; }
+        .frame-attack .portrait-border { border-color: rgba(178,34,34,0.6); }
+        .frame-skill .portrait-border { border-color: rgba(34,68,178,0.6); }
+        .frame-power .portrait-border { border-color: rgba(34,178,68,0.6); }
+        .frame-ancient .portrait-border { border-color: rgba(255,215,0,0.6); }
 
-        /* Ancient Card Specific */
-        .card-ancient .card-inner {
-            background: linear-gradient(180deg, #2a2a1a 0%, #1a1a10 100%);
+        /* Title Banner */
+        .title-banner {
+            position: absolute;
+            top: 200px;
+            left: 14px;
+            width: 272px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .card-ancient .card-portrait {
-            background: linear-gradient(180deg, #4a4a2a 0%, #2a2a15 100%);
-            border: 2px solid rgba(255,215,0,0.3);
-            margin: 4px;
+        .title-text {
+            font-family: 'Kreon', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #f7fafc;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Type Plaque */
+        .type-plaque {
+            position: absolute;
+            top: 245px;
+            left: 115px;
+            background: linear-gradient(180deg, #4a4a4a 0%, #2d2d2d 100%);
+            border: 2px solid #666;
             border-radius: 4px;
+            padding: 2px 12px;
+        }
+        .type-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #f7fafc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .frame-attack .type-plaque { background: linear-gradient(180deg, #b22222 0%, #8b1a1a 100%); border-color: #cd5c5c; }
+        .frame-skill .type-plaque { background: linear-gradient(180deg, #2244b2 0%, #1a3a8b 100%); border-color: #4169e1; }
+        .frame-power .type-plaque { background: linear-gradient(180deg, #22b244 0%, #1a8b3a 100%); border-color: #3cb371; }
+        .frame-ancient .type-plaque { background: linear-gradient(180deg, #ffd700 0%, #daa520 100%); border-color: #ffe135; }
+        .frame-ancient .type-text { color: #1a1a1a; }
+
+        /* Description Area */
+        .description-area {
+            position: absolute;
+            top: 280px;
+            left: 20px;
+            width: 260px;
+            height: 100px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%);
+            border-radius: 4px;
+            padding: 8px;
+            overflow: hidden;
+        }
+        .description-text {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #e2d9c0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* Preview Modal */
-        .modal-overlay {
+        /* Energy Cost */
+        .energy-cost {
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            width: 52px;
+            height: 52px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" fill="%231a1a2e" stroke="%23ffd700" stroke-width="3"/><circle cx="26" cy="26" r="20" fill="%23ffd700"/></svg>');
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .energy-text {
+            font-family: 'Kreon', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+        }
+
+        /* Star/Upgrade indicator */
+        .star-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Ancient Flame Effect */
+        .ancient-flames {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            display: none;
+        }
+        .frame-ancient .ancient-flames {
+            display: block;
+            animation: flicker 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.8; transform: scale(1) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* Card Grid */
+        .card-grid-section { margin-top: 2rem; }
+        .card-grid-section h2 { color: #ffd700; margin-bottom: 1rem; }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Mini Card Preview */
+        .mini-card {
+            position: relative;
+            width: 180px;
+            height: 253px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+        }
+        .mini-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            z-index: 10;
+        }
+        .mini-card .card-inner {
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+        }
+        .mini-card .portrait-container {
+            top: 4px;
+            left: 15px;
+            width: 150px;
+            height: 114px;
+        }
+        .mini-card .title-banner {
+            top: 120px;
+            left: 8px;
+            width: 164px;
+            height: 24px;
+        }
+        .mini-card .title-text { font-size: 11px; }
+        .mini-card .type-plaque {
+            top: 147px;
+            left: 69px;
+            padding: 1px 8px;
+        }
+        .mini-card .type-text { font-size: 8px; }
+        .mini-card .description-area {
+            top: 168px;
+            left: 12px;
+            width: 156px;
+            height: 60px;
+            padding: 4px;
+        }
+        .mini-card .description-text { font-size: 8px; }
+        .mini-card .energy-cost {
+            width: 36px;
+            height: 36px;
+            top: -8px;
+            left: -8px;
+        }
+        .mini-card .energy-text { font-size: 18px; }
+        .mini-card .ancient-flames {
+            width: 48px;
+            height: 48px;
+            top: -12px;
+            right: -12px;
+        }
+
+        /* Modal */
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            z-index: 100;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
             padding: 2rem;
         }
-        .modal-overlay.active { display: flex; }
+        .modal.active { display: flex; }
         .modal-content {
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
             background: #1a1a2e;
             border-radius: 16px;
             padding: 2rem;
-            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
         }
         .modal-close {
             position: absolute;
             top: 1rem;
             right: 1rem;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
             border: none;
             color: white;
-            font-size: 18px;
+            font-size: 24px;
             cursor: pointer;
         }
         .modal-close:hover { background: rgba(255,255,255,0.2); }
-
-        .preview-card-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-        .preview-card {
-            width: 300px;
-            aspect-ratio: 3/4;
-        }
-
-        .modal-info {
-            color: #a0aec0;
-            font-size: 14px;
-        }
-        .modal-info h3 { color: #f7fafc; margin-bottom: 0.5rem; }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .info-label { color: #718096; }
-        .info-value { color: #f7fafc; }
-
-        /* Stats */
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            color: #a0aec0;
-        }
-        .stat-item { text-align: center; }
-        .stat-value { font-size: 1.5rem; font-weight: bold; color: #ffd700; }
-        .stat-label { font-size: 0.875rem; }
     </style>
 </head>
 <body>
@@ -342,59 +440,115 @@
                 <a href="index.html">发布助手</a>
                 <a href="preview.html">卡牌预览</a>
             </div>
-            <p class="subtitle">浏览所有卡池的卡牌，查看游戏风格渲染效果</p>
         </div>
 
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value" id="totalCards">0</div>
-                <div class="stat-label">总卡牌数</div>
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2>📤 上传卡图预览</h2>
+            <div class="upload-grid">
+                <div class="upload-box" id="normalUploadZone">
+                    <div class="upload-icon">🖼️</div>
+                    <p><strong>普通样式卡图</strong></p>
+                    <p class="upload-hint">点击或拖放上传 PNG 图片<br>推荐分辨率: 1000×760</p>
+                    <input type="file" id="normalFileInput" accept=".png,image/png">
+                </div>
+                <div class="upload-box" id="ancientUploadZone">
+                    <div class="upload-icon">✨</div>
+                    <p><strong>先古样式卡图</strong></p>
+                    <p class="upload-hint">点击或拖放上传 PNG 图片<br>推荐分辨率: 606×852</p>
+                    <input type="file" id="ancientFileInput" accept=".png,image/png">
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="filteredCards">0</div>
-                <div class="stat-label">筛选后</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="replacedCards">0</div>
-                <div class="stat-label">已替换</div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>卡牌名称</label>
+                    <input type="text" id="cardName" placeholder="如 SovereignBlade" value="SovereignBlade">
+                </div>
+                <div class="control-group">
+                    <label>费用</label>
+                    <input type="text" id="cardCost" placeholder="1" value="3">
+                </div>
+                <div class="control-group">
+                    <label>类型</label>
+                    <select id="cardType">
+                        <option value="attack">攻击 (Attack)</option>
+                        <option value="skill">技能 (Skill)</option>
+                        <option value="power">能力 (Power)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>稀有度</label>
+                    <select id="cardRarity">
+                        <option value="common">普通 (Common)</option>
+                        <option value="uncommon">优秀 (Uncommon)</option>
+                        <option value="rare">稀有 (Rare)</option>
+                        <option value="ancient">先古 (Ancient)</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="filter-bar">
-            <select id="filterPool">
-                <option value="">所有卡池</option>
-                <option value="regent">储君 (Regent)</option>
-                <option value="ironclad">铁甲战士 (Ironclad)</option>
-                <option value="silent">静默者 (Silent)</option>
-                <option value="defect">缺陷 (Defect)</option>
-                <option value="watcher">守望者 (Watcher)</option>
-            </select>
-            <select id="filterRarity">
-                <option value="">所有稀有度</option>
-                <option value="starter">初始 (Starter)</option>
-                <option value="common">普通 (Common)</option>
-                <option value="uncommon">优秀 (Uncommon)</option>
-                <option value="rare">稀有 (Rare)</option>
-                <option value="ancient">先古 (Ancient)</option>
-            </select>
-            <select id="filterType">
-                <option value="">所有类型</option>
-                <option value="attack">攻击 (Attack)</option>
-                <option value="skill">技能 (Skill)</option>
-                <option value="power">能力 (Power)</option>
-            </select>
-            <input type="text" id="searchCard" placeholder="搜索卡牌名称...">
+        <!-- Preview -->
+        <div class="card-preview-container">
+            <div class="game-card" id="gameCard">
+                <div class="card-frame frame-attack" id="cardFrame">
+                    <div class="card-inner">
+                        <div class="portrait-container" id="portraitContainer">
+                            <img class="portrait-image" id="portraitImage" src="" alt="Card Portrait">
+                            <div class="portrait-placeholder" id="portraitPlaceholder">上传卡图预览</div>
+                        </div>
+                        <div class="portrait-border"></div>
+                        <div class="title-banner">
+                            <span class="title-text" id="cardTitle">卡牌名称</span>
+                        </div>
+                        <div class="type-plaque">
+                            <span class="type-text" id="typeText">攻击</span>
+                        </div>
+                        <div class="description-area">
+                            <p class="description-text" id="cardDesc">造成6点伤害。</p>
+                        </div>
+                    </div>
+                    <div class="energy-cost">
+                        <span class="energy-text" id="energyText">1</span>
+                    </div>
+                    <div class="ancient-flames">
+                        <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'><circle cx='40' cy='40' r='35' fill='%23ffd700' opacity='0.8'/><circle cx='40' cy='40' r='25' fill='%23ff8c00' opacity='0.6'/><circle cx='40' cy='40' r='15' fill='%23ff4500' opacity='0.8'/></svg>" alt="Ancient Flames">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="card-grid" id="cardGrid"></div>
+        <!-- Existing Cards Grid -->
+        <div class="card-grid-section">
+            <h2>📁 已替换卡牌库</h2>
+            <div class="filter-bar">
+                <select id="filterType">
+                    <option value="">所有类型</option>
+                    <option value="attack">攻击</option>
+                    <option value="skill">技能</option>
+                    <option value="power">能力</option>
+                </select>
+                <select id="filterRarity">
+                    <option value="">所有稀有度</option>
+                    <option value="common">普通</option>
+                    <option value="uncommon">优秀</option>
+                    <option value="rare">稀有</option>
+                    <option value="ancient">先古</option>
+                </select>
+                <input type="text" id="searchCard" placeholder="搜索卡牌名称...">
+            </div>
+            <div class="card-grid" id="cardGrid"></div>
+        </div>
     </div>
 
-    <!-- Preview Modal -->
-    <div class="modal-overlay" id="previewModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">×</button>
-            <div class="preview-card-container" id="previewCardContainer"></div>
-            <div class="modal-info" id="modalInfo"></div>
+    <!-- Modal for full preview -->
+    <div class="modal" id="previewModal">
+        <button class="modal-close" onclick="closeModal()">×</button>
+        <div class="card-preview-container" style="background: transparent;">
+            <div class="game-card" id="modalCard" style="transform: scale(1.5);">
+                <!-- Same structure as preview card -->
+            </div>
         </div>
     </div>
 
@@ -402,269 +556,221 @@
         const REPO_OWNER = 'LingEnd';
         const REPO_NAME = 'RegentFemPortraits';
 
-        // Card Database - 扩展包含更多卡池
-        const allCards = [
-            // 储君卡牌
-            { name: 'DefendRegent', pool: 'regent', rarity: 'starter', type: 'skill', cost: 1, title: '格挡', desc: '获得5点格挡。' },
-            { name: 'Venerate', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '崇敬', desc: '获得1点能量。' },
-            { name: 'FallingStar', pool: 'regent', rarity: 'rare', type: 'attack', cost: 2, title: '陨星', desc: '造成20点伤害。虚无。' },
-            { name: 'SovereignBlade', pool: 'regent', rarity: 'ancient', type: 'attack', cost: 3, title: '君王之剑', desc: '造成32点伤害。消耗。' },
-            { name: 'Charge', pool: 'regent', rarity: 'common', type: 'attack', cost: 1, title: '冲锋', desc: '造成6点伤害。获得2点格挡。' },
-            { name: 'ChildOfTheStars', pool: 'regent', rarity: 'rare', type: 'power', cost: 3, title: '星之子', desc: '每回合开始获得2点能量。' },
-            { name: 'CloakOfStars', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '星之斗篷', desc: '获得6点格挡。抽2张牌。' },
-            { name: 'Conqueror', pool: 'regent', rarity: 'rare', type: 'attack', cost: 2, title: '征服者', desc: '造成14点伤害。如果这张牌是你打出的第一张牌，伤害翻倍。' },
-            { name: 'Convergence', pool: 'regent', rarity: 'uncommon', type: 'attack', cost: 2, title: '汇聚', desc: '造成8点伤害。获得8点格挡。' },
-            { name: 'CosmicIndifference', pool: 'regent', rarity: 'rare', type: 'attack', cost: 2, title: '宇宙冷漠', desc: '对所有敌人造成9点伤害。所有敌人在本回合中失去9点力量。' },
-            { name: 'DecisionsDecisions', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 0, title: '抉择，抉择', desc: '抽3张牌。选择你手牌中的一张技能牌，并将其打出3次。消耗。' },
-            { name: 'Glow', pool: 'regent', rarity: 'common', type: 'skill', cost: 0, title: '发光', desc: '获得3点格挡。获得1点能量。' },
-            { name: 'HeavenlyDrill', pool: 'regent', rarity: 'rare', type: 'attack', cost: 3, title: '天降钻', desc: '造成5点伤害。在你的回合结束时，如果这张牌位于抽牌堆顶部，将其打出。消耗。' },
-            { name: 'KinglyKick', pool: 'regent', rarity: 'common', type: 'attack', cost: 1, title: '王踢', desc: '造成8点伤害。使敌人虚弱1回合。' },
-            { name: 'KinglyPunch', pool: 'regent', rarity: 'common', type: 'attack', cost: 1, title: '王拳', desc: '造成9点伤害。' },
-            { name: 'MakeItSo', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '使其成真', desc: '下一张打出的攻击牌伤害翻倍。' },
-            { name: 'MonarchsGaze', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '君王凝视', desc: '敌方意图变为攻击。获得4点格挡。' },
-            { name: 'NeutronAegis', pool: 'regent', rarity: 'rare', type: 'skill', cost: 2, title: '中子护盾', desc: '获得12点格挡。获得1层金属化。' },
-            { name: 'Patter', pool: 'regent', rarity: 'common', type: 'skill', cost: 0, title: '喋喋不休', desc: '抽1张牌。获得1点能量。' },
-            { name: 'Parry', pool: 'regent', rarity: 'starter', type: 'skill', cost: 1, title: '格挡', desc: '获得5点格挡。' },
-            { name: 'Prophesize', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '预言', desc: '抽2张牌。看3张牌。' },
-            { name: 'Quasar', pool: 'regent', rarity: 'rare', type: 'attack', cost: 3, title: '类星体', desc: '造成6点伤害3次。' },
-            { name: 'Radiate', pool: 'regent', rarity: 'uncommon', type: 'attack', cost: 2, title: '辐射', desc: '造成6点伤害。对其他敌人造成4点伤害。' },
-            { name: 'RefineBlade', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '精炼之剑', desc: '获得1点力量。获得1点敏捷。' },
-            { name: 'SwordSage', pool: 'regent', rarity: 'rare', type: 'power', cost: 3, title: '剑之贤者', desc: '攻击造成的伤害增加40%。' },
-            { name: 'TheSmith', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '铁匠', desc: '升级手牌中一张牌。' },
-            { name: 'Tyranny', pool: 'regent', rarity: 'rare', type: 'power', cost: 3, title: '暴政', desc: '在你的回合开始时，抽一张牌，并从你的手牌中消耗一张牌。' },
-            { name: 'VoidForm', pool: 'regent', rarity: 'rare', type: 'power', cost: 3, title: '虚空形态', desc: '每打出一张攻击牌，获得1点力量。每打出一张技能牌，获得1点敏捷。' },
-            { name: 'WroughtInWar', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 1, title: '锻造于战争', desc: '获得2点力量。获得2点敏捷。' },
-            { name: 'Arsenal', pool: 'regent', rarity: 'rare', type: 'skill', cost: 1, title: '武器库', desc: '将三张攻击牌加入你的手牌。消耗。' },
-            { name: 'BeatIntoShape', pool: 'regent', rarity: 'common', type: 'skill', cost: 1, title: '锤炼成型', desc: '升级手牌中一张攻击牌。' },
-            { name: 'BigBang', pool: 'regent', rarity: 'rare', type: 'attack', cost: 4, title: '大爆炸', desc: '造成40点伤害。消耗。' },
-            { name: 'BundleOfJoy', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 0, title: '新生之喜', desc: '将3张随机无色牌添加到你的手牌。消耗。' },
-            { name: 'CelestialMight', pool: 'regent', rarity: 'rare', type: 'power', cost: 3, title: '天体之力', desc: '每当你生成一张牌，就获得1点力量。' },
-            { name: 'GatherLight', pool: 'regent', rarity: 'starter', type: 'skill', cost: 1, title: '聚集光芒', desc: '获得4点格挡。抽1张牌。' },
-            { name: 'KnockoutBlow', pool: 'regent', rarity: 'uncommon', type: 'attack', cost: 2, title: '击倒一击', desc: '造成20点伤害。如果敌人意图攻击，则伤害翻倍。' },
-            { name: 'ManifestAuthority', pool: 'regent', rarity: 'rare', type: 'skill', cost: 1, title: '彰显权威', desc: '获得3点力量。获得3点敏捷。' },
-            { name: 'RoyalGamble', pool: 'regent', rarity: 'uncommon', type: 'skill', cost: 0, title: '皇家豪赌', desc: '抽4张牌。弃掉手牌中所有牌。' },
-            { name: 'ShiningStrike', pool: 'regent', rarity: 'uncommon', type: 'attack', cost: 2, title: '闪耀打击', desc: '造成12点伤害。获得3点格挡。' },
-            { name: 'Terraforming', pool: 'regent', rarity: 'rare', type: 'skill', cost: 1, title: '地形改造', desc: '获得2点能量。抽3张牌。消耗。' },
-            
-            // 铁甲战士卡牌
-            { name: 'Strike_Ironclad', pool: 'ironclad', rarity: 'starter', type: 'attack', cost: 1, title: '打击', desc: '造成6点伤害。' },
-            { name: 'Defend_Ironclad', pool: 'ironclad', rarity: 'starter', type: 'skill', cost: 1, title: '防御', desc: '获得5点格挡。' },
-            { name: 'Carnage', pool: 'ironclad', rarity: 'common', type: 'attack', cost: 2, title: '屠杀', desc: '造成20点伤害。消耗。' },
-            { name: 'Flex', pool: 'ironclad', rarity: 'common', type: 'skill', cost: 0, title: '屈伸', desc: '获得2点力量。' },
-            { name: 'Bash', pool: 'ironclad', rarity: 'common', type: 'attack', cost: 2, title: '痛击', desc: '造成8点伤害。使敌人虚弱2回合。' },
-            { name: 'SwordBoomerang', pool: 'ironclad', rarity: 'uncommon', type: 'attack', cost: 1, title: '回旋剑', desc: '造成9点伤害两次。' },
-            { name: 'ShrugItOff', pool: 'ironclad', rarity: 'common', type: 'skill', cost: 1, title: '耸肩', desc: '获得8点格挡。抽1张牌。' },
-            { name: 'Clash', pool: 'ironclad', rarity: 'uncommon', type: 'attack', cost: 0, title: '冲突', desc: '如果你手牌中没有技能牌，造成24点伤害。消耗。' },
-            { name: 'Cleave', pool: 'ironclad', rarity: 'common', type: 'attack', cost: 1, title: '横扫', desc: '对所有敌人造成8点伤害。' },
-            { name: 'Anger', pool: 'ironclad', rarity: 'common', type: 'attack', cost: 0, title: '怒火', desc: '造成6点伤害。将一张怒火加入弃牌堆。' },
-            { name: 'TwinStrike', pool: 'ironclad', rarity: 'common', type: 'attack', cost: 1, title: '双重打击', desc: '造成5点伤害两次。' },
-            { name: 'Rupture', pool: 'ironclad', rarity: 'uncommon', type: 'attack', cost: 1, title: '破裂', desc: '造成9点伤害。如果敌人处于流血状态，造成额外9点伤害。' },
-            { name: 'BattleTrance', pool: 'ironclad', rarity: 'rare', type: 'skill', cost: 0, title: '战斗恍惚', desc: '抽3张牌。本回合无法再抽牌。' },
-            { name: 'Bludgeon', pool: 'ironclad', rarity: 'rare', type: 'attack', cost: 3, title: '重击', desc: '造成32点伤害。消耗。' },
-            { name: 'DemonForm', pool: 'ironclad', rarity: 'rare', type: 'power', cost: 3, title: '恶魔形态', desc: '每回合开始获得2点力量。' },
-            
-            // 静默者卡牌
-            { name: 'Strike_Silent', pool: 'silent', rarity: 'starter', type: 'attack', cost: 1, title: '打击', desc: '造成6点伤害。' },
-            { name: 'Defend_Silent', pool: 'silent', rarity: 'starter', type: 'skill', cost: 1, title: '防御', desc: '获得5点格挡。' },
-            { name: 'SneakAttack', pool: 'silent', rarity: 'common', type: 'attack', cost: 0, title: '偷袭', desc: '造成9点伤害。消耗。' },
-            { name: 'Backstab', pool: 'silent', rarity: 'common', type: 'attack', cost: 0, title: '背刺', desc: '如果敌人没有格挡，造成12点伤害。消耗。' },
-            { name: 'LethalPoison', pool: 'silent', rarity: 'rare', type: 'power', cost: 3, title: '致命毒药', desc: '毒素在回合开始时造成额外伤害。' },
-            { name: 'Shuriken', pool: 'silent', rarity: 'uncommon', type: 'attack', cost: 1, title: '手里剑', desc: '造成4点伤害3次。' },
-            { name: 'Caltrops', pool: 'silent', rarity: 'uncommon', type: 'skill', cost: 1, title: '铁蒺藜', desc: '使敌人流血3回合。每当敌人攻击，使其流血3回合。' },
-            
-            // 缺陷卡牌
-            { name: 'Strike_Defect', pool: 'defect', rarity: 'starter', type: 'attack', cost: 1, title: '打击', desc: '造成6点伤害。' },
-            { name: 'Defend_Defect', pool: 'defect', rarity: 'starter', type: 'skill', cost: 1, title: '防御', desc: '获得5点格挡。' },
-            { name: 'Zap', pool: 'defect', rarity: 'common', type: 'attack', cost: 0, title: '电击', desc: '造成4点伤害。获得1点电荷。' },
-            { name: 'StaticDischarge', pool: 'defect', rarity: 'rare', type: 'attack', cost: 1, title: '静电释放', desc: '造成10点伤害。如果有3点电荷，则翻倍。消耗。' },
-            { name: 'Fusion', pool: 'defect', rarity: 'rare', type: 'skill', cost: 1, title: '融合', desc: '获得3点电荷。升级手牌中一张牌。' },
-            
-            // 守望者卡牌
-            { name: 'Strike_Watcher', pool: 'watcher', rarity: 'starter', type: 'attack', cost: 1, title: '打击', desc: '造成6点伤害。' },
-            { name: 'Defend_Watcher', pool: 'watcher', rarity: 'starter', type: 'skill', cost: 1, title: '防御', desc: '获得5点格挡。' },
-            { name: 'Eruption', pool: 'watcher', rarity: 'common', type: 'attack', cost: 1, title: '爆发', desc: '造成8点伤害。' },
-            { name: 'Judgment', pool: 'watcher', rarity: 'rare', type: 'attack', cost: 3, title: '审判', desc: '造成32点伤害。消耗。' },
-            { name: 'Blossom', pool: 'watcher', rarity: 'uncommon', type: 'skill', cost: 1, title: '绽放', desc: '获得3点格挡。抽3张牌。' },
+        // Card database
+        const cardDatabase = [
+            { name: 'SovereignBlade', rarity: 'ancient', type: 'attack', cost: 3, title: '君王之剑', desc: '造成32点伤害。消耗。', hasAncient: true },
+            { name: 'FallingStar', rarity: 'rare', type: 'attack', cost: 2, title: '陨星', desc: '造成20点伤害。虚无。' },
+            { name: 'Terraforming', rarity: 'rare', type: 'skill', cost: 1, title: '地形改造', desc: '获得2点能量。抽3张牌。消耗。' },
+            { name: 'VoidForm', rarity: 'rare', type: 'power', cost: 3, title: '虚空形态', desc: '每打出一张攻击牌，获得1点力量。每打出一张技能牌，获得1点敏捷。' },
+            { name: 'ChildOfTheStars', rarity: 'rare', type: 'power', cost: 3, title: '星之子', desc: '每回合开始获得2点能量。' },
+            { name: 'Quasar', rarity: 'rare', type: 'attack', cost: 3, title: '类星体', desc: '造成6点伤害3次。' },
+            { name: 'BigBang', rarity: 'rare', type: 'attack', cost: 4, title: '大爆炸', desc: '造成40点伤害。消耗。' },
+            { name: 'CosmicIndifference', rarity: 'rare', type: 'attack', cost: 2, title: '宇宙冷漠', desc: '对所有敌人造成9点伤害。所有敌人在本回合中失去9点力量。' },
+            { name: 'HeavenlyDrill', rarity: 'rare', type: 'attack', cost: 3, title: '天降钻', desc: '造成5点伤害。在你的回合结束时，如果这张牌位于抽牌堆顶部，将其打出。消耗。' },
+            { name: 'Tyranny', rarity: 'rare', type: 'power', cost: 3, title: '暴政', desc: '在你的回合开始时，抽一张牌，并从你的手牌中消耗一张牌。' },
+            { name: 'SwordSage', rarity: 'rare', type: 'power', cost: 3, title: '剑之贤者', desc: '攻击造成的伤害增加40%。' },
+            { name: 'CelestialMight', rarity: 'rare', type: 'power', cost: 3, title: '天体之力', desc: '每当你生成一张牌，就获得1点力量。' },
+            { name: 'ManifestAuthority', rarity: 'rare', type: 'skill', cost: 1, title: '彰显权威', desc: '获得3点力量。获得3点敏捷。' },
+            { name: 'NeutronAegis', rarity: 'rare', type: 'skill', cost: 2, title: '中子护盾', desc: '获得12点格挡。获得1层金属化。' },
+            { name: 'Arsenal', rarity: 'rare', type: 'skill', cost: 1, title: '武器库', desc: '将三张攻击牌加入你的手牌。消耗。' },
+            { name: 'BeatIntoShape', rarity: 'common', type: 'skill', cost: 1, title: '锤炼成型', desc: '升级手牌中一张攻击牌。' },
+            { name: 'BundleOfJoy', rarity: 'uncommon', type: 'skill', cost: 0, title: '新生之喜', desc: '将3张随机无色牌添加到你的手牌。消耗。' },
+            { name: 'Charge', rarity: 'common', type: 'attack', cost: 1, title: '冲锋', desc: '造成6点伤害。获得2点格挡。' },
+            { name: 'Glow', rarity: 'common', type: 'skill', cost: 0, title: '发光', desc: '获得3点格挡。获得1点能量。' },
+            { name: 'DefendRegent', rarity: 'starter', type: 'skill', cost: 1, title: '格挡', desc: '获得5点格挡。' },
+            { name: 'Parry', rarity: 'starter', type: 'skill', cost: 1, title: '格挡', desc: '获得5点格挡。' },
+            { name: 'GatherLight', rarity: 'starter', type: 'skill', cost: 1, title: '聚集光芒', desc: '获得4点格挡。抽1张牌。' },
+            { name: 'Patter', rarity: 'common', type: 'skill', cost: 0, title: '喋喋不休', desc: '抽1张牌。获得1点能量。' },
+            { name: 'KinglyPunch', rarity: 'common', type: 'attack', cost: 1, title: '王拳', desc: '造成9点伤害。' },
+            { name: 'KinglyKick', rarity: 'common', type: 'attack', cost: 1, title: '王踢', desc: '造成8点伤害。使敌人虚弱1回合。' },
+            { name: 'ShiningStrike', rarity: 'uncommon', type: 'attack', cost: 2, title: '闪耀打击', desc: '造成12点伤害。获得3点格挡。' },
+            { name: 'KnockoutBlow', rarity: 'uncommon', type: 'attack', cost: 2, title: '击倒一击', desc: '造成20点伤害。如果敌人意图攻击，则伤害翻倍。' },
+            { name: 'Radiate', rarity: 'uncommon', type: 'attack', cost: 2, title: '辐射', desc: '造成6点伤害。对其他敌人造成4点伤害。' },
+            { name: 'CloakOfStars', rarity: 'uncommon', type: 'skill', cost: 1, title: '星之斗篷', desc: '获得6点格挡。抽2张牌。' },
+            { name: 'Conqueror', rarity: 'rare', type: 'attack', cost: 2, title: '征服者', desc: '造成14点伤害。如果这张牌是你打出的第一张牌，伤害翻倍。' },
+            { name: 'Convergence', rarity: 'uncommon', type: 'attack', cost: 2, title: '汇聚', desc: '造成8点伤害。获得8点格挡。' },
+            { name: 'DecisionsDecisions', rarity: 'uncommon', type: 'skill', cost: 0, title: '抉择，抉择', desc: '抽3张牌。选择你手牌中的一张技能牌，并将其打出3次。消耗。' },
+            { name: 'MakeItSo', rarity: 'uncommon', type: 'skill', cost: 1, title: '使其成真', desc: '下一张打出的攻击牌伤害翻倍。' },
+            { name: 'MonarchsGaze', rarity: 'uncommon', type: 'skill', cost: 1, title: '君王凝视', desc: '敌方意图变为攻击。获得4点格挡。' },
+            { name: 'Prophesize', rarity: 'uncommon', type: 'skill', cost: 1, title: '预言', desc: '抽2张牌。看3张牌。' },
+            { name: 'RefineBlade', rarity: 'uncommon', type: 'skill', cost: 1, title: '精炼之剑', desc: '获得1点力量。获得1点敏捷。' },
+            { name: 'TheSmith', rarity: 'uncommon', type: 'skill', cost: 1, title: '铁匠', desc: '升级手牌中一张牌。' },
+            { name: 'RoyalGamble', rarity: 'uncommon', type: 'skill', cost: 0, title: '皇家豪赌', desc: '抽4张牌。弃掉手牌中所有牌。' },
+            { name: 'WroughtInWar', rarity: 'uncommon', type: 'skill', cost: 1, title: '锻造于战争', desc: '获得2点力量。获得2点敏捷。' },
+            { name: 'Venerate', rarity: 'uncommon', type: 'skill', cost: 1, title: '崇敬', desc: '获得1点能量。' },
         ];
 
-        // Load replacement data
-        let replacedCards = [];
+        let currentImageData = null;
+        let currentAncientImageData = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadReplacementData();
+            setupUploadZone('normalUploadZone', 'normalFileInput', handleNormalUpload);
+            setupUploadZone('ancientUploadZone', 'ancientFileInput', handleAncientUpload);
+            setupControls();
             renderCardGrid();
-            setupEventListeners();
+            updatePreview();
         });
 
-        async function loadReplacementData() {
-            try {
-                const response = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/RegentFemPortraits/card_replacements.json`);
-                const config = await response.json();
-                replacedCards = [
-                    ...config.normalReplacements.map(r => r.cardType),
-                    ...config.ancientReplacements.map(r => r.cardType)
-                ];
-            } catch {
-                replacedCards = [];
+        function setupUploadZone(zoneId, inputId, handler) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) handler([e.dataTransfer.files[0]]);
+            });
+            input.addEventListener('change', () => {
+                if (input.files.length > 0) handler([input.files[0]]);
+            });
+        }
+
+        function handleNormalUpload(files) {
+            if (files.length === 0 || !files[0].name.toLowerCase().endsWith('.png')) {
+                alert('请上传 PNG 格式的图片');
+                return;
             }
-            updateStats();
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImageData = e.target.result;
+                document.getElementById('portraitImage').src = currentImageData;
+                document.getElementById('portraitImage').style.display = 'block';
+                document.getElementById('portraitPlaceholder').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleAncientUpload(files) {
+            if (files.length === 0 || !files[0].name.toLowerCase().endsWith('.png')) {
+                alert('请上传 PNG 格式的图片');
+                return;
+            }
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentAncientImageData = e.target.result;
+                // For ancient cards, update the image if ancient is selected
+                if (document.getElementById('cardRarity').value === 'ancient') {
+                    document.getElementById('portraitImage').src = currentAncientImageData;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupControls() {
+            ['cardName', 'cardCost', 'cardType', 'cardRarity', 'cardDesc'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updatePreview);
+                document.getElementById(id).addEventListener('change', updatePreview);
+            });
+
+            ['filterType', 'filterRarity', 'searchCard'].forEach(id => {
+                document.getElementById(id).addEventListener('change', renderCardGrid);
+                document.getElementById(id).addEventListener('input', renderCardGrid);
+            });
+        }
+
+        function updatePreview() {
+            const name = document.getElementById('cardName').value || '卡牌名称';
+            const cost = document.getElementById('cardCost').value || '1';
+            const type = document.getElementById('cardType').value;
+            const rarity = document.getElementById('cardRarity').value;
+            const desc = document.getElementById('cardDesc').value || '卡牌描述';
+
+            document.getElementById('cardTitle').textContent = name;
+            document.getElementById('energyText').textContent = cost;
+            document.getElementById('cardDesc').textContent = desc;
+
+            const typeMap = { attack: '攻击', skill: '技能', power: '能力' };
+            document.getElementById('typeText').textContent = typeMap[type] || type;
+
+            const frame = document.getElementById('cardFrame');
+            frame.className = 'card-frame frame-' + type;
+            if (rarity === 'ancient') {
+                frame.className = 'card-frame frame-ancient';
+            }
+
+            // Use ancient image if available and ancient is selected
+            if (rarity === 'ancient' && currentAncientImageData) {
+                document.getElementById('portraitImage').src = currentAncientImageData;
+            } else if (currentImageData) {
+                document.getElementById('portraitImage').src = currentImageData;
+            }
         }
 
         function renderCardGrid() {
             const grid = document.getElementById('cardGrid');
-            const poolFilter = document.getElementById('filterPool').value;
-            const rarityFilter = document.getElementById('filterRarity').value;
             const typeFilter = document.getElementById('filterType').value;
+            const rarityFilter = document.getElementById('filterRarity').value;
             const searchFilter = document.getElementById('searchCard').value.toLowerCase();
 
-            const filteredCards = allCards.filter(card => {
-                if (poolFilter && card.pool !== poolFilter) return false;
-                if (rarityFilter && card.rarity !== rarityFilter) return false;
+            const filtered = cardDatabase.filter(card => {
                 if (typeFilter && card.type !== typeFilter) return false;
-                if (searchFilter && !card.title.toLowerCase().includes(searchFilter) && 
-                    !card.name.toLowerCase().includes(searchFilter)) return false;
+                if (rarityFilter && card.rarity !== rarityFilter) return false;
+                if (searchFilter && !card.name.toLowerCase().includes(searchFilter) && !card.title.toLowerCase().includes(searchFilter)) return false;
                 return true;
             });
 
-            grid.innerHTML = filteredCards.map(card => createCardHTML(card)).join('');
-            updateStats(filteredCards.length);
+            grid.innerHTML = filtered.map(card => createMiniCard(card)).join('');
         }
 
-        function createCardHTML(card) {
-            const hasReplacement = replacedCards.includes(card.name);
-            const hasImage = hasReplacement;
-            
+        function createMiniCard(card) {
+            const frameClass = 'frame-' + card.type;
+            const imageUrl = `images/${card.name}.png`;
+
             return `
-                <div class="game-card card-${card.rarity}" onclick="showPreview('${card.name}')">
+                <div class="mini-card ${card.rarity === 'ancient' ? 'frame-ancient' : frameClass}" onclick="showCardPreview('${card.name}')">
                     <div class="card-inner">
-                        <div class="card-header">
-                            <div class="card-cost">${card.cost}</div>
-                            <div class="card-type type-${card.type}">${getTypeLabel(card.type)}</div>
+                        <div class="portrait-container">
+                            <img class="portrait-image" src="${imageUrl}" alt="${card.title}"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=portrait-placeholder>${card.name}</div>';">
                         </div>
-                        <div class="card-portrait">
-                            ${hasImage ? 
-                                `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/RegentFemPortraits/card_portraits/${card.pool}/${card.name}.png" 
-                                   alt="${card.title}"
-                                   onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'portrait-placeholder\'>${card.name}</div>';">` :
-                                `<div class="portrait-placeholder">${card.name}</div>`
-                            }
+                        <div class="portrait-border"></div>
+                        <div class="title-banner">
+                            <span class="title-text">${card.title}</span>
                         </div>
-                        <div class="card-title">
-                            <div class="card-title-text">${card.title}</div>
+                        <div class="type-plaque">
+                            <span class="type-text">${card.type === 'attack' ? '攻击' : card.type === 'skill' ? '技能' : '能力'}</span>
                         </div>
-                        <div class="card-desc">
-                            <div class="card-desc-text">${card.desc}</div>
+                        <div class="description-area">
+                            <p class="description-text">${card.desc}</p>
                         </div>
                     </div>
-                    <div class="card-pool-badge pool-${card.pool}">${getPoolLabel(card.pool)}</div>
-                    ${hasReplacement ? `<div style="position:absolute;bottom:4px;left:4px;width:20px;height:20px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:bold;">✓</div>` : ''}
+                    <div class="energy-cost">
+                        <span class="energy-text">${card.cost}</span>
+                    </div>
+                    ${card.rarity === 'ancient' ? '<div class="ancient-flames"><img src="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 80 80\'><circle cx=\'40\' cy=\'40\' r=\'35\' fill=\'%23ffd700\' opacity=\'0.8\'/><circle cx=\'40\' cy=\'40\' r=\'25\' fill=\'%23ff8c00\' opacity=\'0.6\'/><circle cx=\'40\' cy=\'40\' r=\'15\' fill=\'%23ff4500\' opacity=\'0.8\'/></svg>" alt="Flames"></div>' : ''}
                 </div>
             `;
         }
 
-        function getTypeLabel(type) {
-            const labels = { attack: '攻击', skill: '技能', power: '能力' };
-            return labels[type] || type;
-        }
-
-        function getPoolLabel(pool) {
-            const labels = { 
-                regent: '储君', 
-                ironclad: '铁甲', 
-                silent: '静默', 
-                defect: '缺陷', 
-                watcher: '守望' 
-            };
-            return labels[pool] || pool;
-        }
-
-        function showPreview(cardName) {
-            const card = allCards.find(c => c.name === cardName);
+        function showCardPreview(cardName) {
+            const card = cardDatabase.find(c => c.name === cardName);
             if (!card) return;
 
-            const modal = document.getElementById('previewModal');
-            const container = document.getElementById('previewCardContainer');
-            const info = document.getElementById('modalInfo');
+            document.getElementById('cardName').value = card.name;
+            document.getElementById('cardCost').value = card.cost;
+            document.getElementById('cardType').value = card.type;
+            document.getElementById('cardRarity').value = card.rarity;
+            document.getElementById('cardDesc').value = card.desc;
 
-            const hasReplacement = replacedCards.includes(cardName);
-            
-            container.innerHTML = `
-                <div class="game-card preview-card card-${card.rarity}">
-                    <div class="card-inner">
-                        <div class="card-header">
-                            <div class="card-cost">${card.cost}</div>
-                            <div class="card-type type-${card.type}">${getTypeLabel(card.type)}</div>
-                        </div>
-                        <div class="card-portrait">
-                            ${hasReplacement ? 
-                                `<img src="https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/RegentFemPortraits/card_portraits/${card.pool}/${card.name}.png" 
-                                   alt="${card.title}"
-                                   onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'portrait-placeholder\'>${card.name}</div>';">` :
-                                `<div class="portrait-placeholder">${card.name}</div>`
-                            }
-                        </div>
-                        <div class="card-title">
-                            <div class="card-title-text">${card.title}</div>
-                        </div>
-                        <div class="card-desc">
-                            <div class="card-desc-text">${card.desc}</div>
-                        </div>
-                    </div>
-                    <div class="card-pool-badge pool-${card.pool}">${getPoolLabel(card.pool)}</div>
-                </div>
-            `;
-
-            info.innerHTML = `
-                <h3>卡牌信息</h3>
-                <div class="info-row"><span class="info-label">名称</span><span class="info-value">${card.name}</span></div>
-                <div class="info-row"><span class="info-label">显示名称</span><span class="info-value">${card.title}</span></div>
-                <div class="info-row"><span class="info-label">卡池</span><span class="info-value">${getPoolLabel(card.pool)}</span></div>
-                <div class="info-row"><span class="info-label">稀有度</span><span class="info-value">${getRarityLabel(card.rarity)}</span></div>
-                <div class="info-row"><span class="info-label">类型</span><span class="info-value">${getTypeLabel(card.type)}</span></div>
-                <div class="info-row"><span class="info-label">费用</span><span class="info-value">${card.cost}</span></div>
-                <div class="info-row"><span class="info-label">已替换</span><span class="info-value">${hasReplacement ? '✓ 是' : '✗ 否'}</span></div>
-            `;
-
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function getRarityLabel(rarity) {
-            const labels = { 
-                starter: '初始', 
-                common: '普通', 
-                uncommon: '优秀', 
-                rare: '稀有', 
-                ancient: '先古' 
+            // Load the image
+            const img = new Image();
+            img.onload = () => {
+                currentImageData = img.src;
+                updatePreview();
             };
-            return labels[rarity] || rarity;
+            img.src = `images/${card.name}.png`;
+
+            updatePreview();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function closeModal() {
-            const modal = document.getElementById('previewModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function setupEventListeners() {
-            ['filterPool', 'filterRarity', 'filterType', 'searchCard'].forEach(id => {
-                document.getElementById(id).addEventListener('change', renderCardGrid);
-                document.getElementById(id).addEventListener('input', renderCardGrid);
-            });
-
-            document.getElementById('previewModal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
-            });
-        }
-
-        function updateStats(filteredCount = null) {
-            document.getElementById('totalCards').textContent = allCards.length;
-            document.getElementById('filteredCards').textContent = filteredCount ?? allCards.length;
-            document.getElementById('replacedCards').textContent = replacedCards.length;
+            document.getElementById('previewModal').classList.remove('active');
         }
     </script>
 </body>
