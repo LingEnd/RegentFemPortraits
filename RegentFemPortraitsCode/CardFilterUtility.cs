@@ -100,8 +100,7 @@ public static class CardFilterUtility
     }
   }
 
-  private static void 
-  (CanvasItem? canvasItem)
+  private static void ApplyFilterToNode(CanvasItem? canvasItem)
   {
     if (canvasItem == null)
     {

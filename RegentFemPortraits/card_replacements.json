@@ -1,0 +1,172 @@
+{
+  "normalReplacements": [
+    {
+      "cardType": "DefendRegent",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/DefendRegent.png"
+    },
+    {
+      "cardType": "Venerate",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Venerate.png"
+    },
+    {
+      "cardType": "FallingStar",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/FallingStar.png"
+    },
+    {
+      "cardType": "Begone",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Begone.png"
+    },
+    {
+      "cardType": "Charge",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Charge.png"
+    },
+    {
+      "cardType": "ChildOfTheStars",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/ChildOfTheStars.png"
+    },
+    {
+      "cardType": "CloakOfStars",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/CloakOfStars.png"
+    },
+    {
+      "cardType": "Conqueror",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Conqueror.png"
+    },
+    {
+      "cardType": "Convergence",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Convergence.png"
+    },
+    {
+      "cardType": "CosmicIndifference",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/CosmicIndifference.png"
+    },
+    {
+      "cardType": "DecisionsDecisions",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/DecisionsDecisions.png"
+    },
+    {
+      "cardType": "Glow",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Glow.png"
+    },
+    {
+      "cardType": "HeavenlyDrill",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/HeavenlyDrill.png"
+    },
+    {
+      "cardType": "KinglyKick",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/KinglyKick.png"
+    },
+    {
+      "cardType": "KinglyPunch",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/KinglyPunch.png"
+    },
+    {
+      "cardType": "MakeItSo",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/MakeItSo.png"
+    },
+    {
+      "cardType": "MonarchsGaze",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/MonarchsGaze.png"
+    },
+    {
+      "cardType": "NeutronAegis",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/NeutronAegis.png"
+    },
+    {
+      "cardType": "Patter",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Patter.png"
+    },
+    {
+      "cardType": "Parry",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Parry.png"
+    },
+    {
+      "cardType": "Prophesize",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Prophesize.png"
+    },
+    {
+      "cardType": "Quasar",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Quasar.png"
+    },
+    {
+      "cardType": "Radiate",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Radiate.png"
+    },
+    {
+      "cardType": "RefineBlade",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/RefineBlade.png"
+    },
+    {
+      "cardType": "SwordSage",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/SwordSage.png"
+    },
+    {
+      "cardType": "TheSmith",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/TheSmith.png"
+    },
+    {
+      "cardType": "Tyranny",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Tyranny.png"
+    },
+    {
+      "cardType": "VoidForm",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/VoidForm.png"
+    },
+    {
+      "cardType": "WroughtInWar",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/WroughtInWar.png"
+    },
+    {
+      "cardType": "Arsenal",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Arsenal.png"
+    },
+    {
+      "cardType": "BeatIntoShape",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/BeatIntoShape.png"
+    },
+    {
+      "cardType": "BigBang",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/BigBang.png"
+    },
+    {
+      "cardType": "BundleOfJoy",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/BundleOfJoy.png"
+    },
+    {
+      "cardType": "CelestialMight",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/CelestialMight.png"
+    },
+    {
+      "cardType": "GatherLight",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/GatherLight.png"
+    },
+    {
+      "cardType": "KnockoutBlow",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/KnockoutBlow.png"
+    },
+    {
+      "cardType": "ManifestAuthority",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/ManifestAuthority.png"
+    },
+    {
+      "cardType": "RoyalGamble",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/RoyalGamble.png"
+    },
+    {
+      "cardType": "ShiningStrike",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/ShiningStrike.png"
+    },
+    {
+      "cardType": "Terraforming",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Terraforming.png"
+    }
+  ],
+  "ancientReplacements": [
+    {
+      "cardType": "SovereignBlade",
+      "normalPortrait": "res://RegentFemPortraits/card_portraits/regent/Terraforming.png",
+      "ancientPortrait": "res://RegentFemPortraits/card_portraits/regent/SovereignBlade.png",
+      "configKey": "SovereignBladeAncientStyle"
+    }
+  ]
+}
