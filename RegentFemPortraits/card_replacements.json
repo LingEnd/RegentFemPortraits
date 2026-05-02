@@ -5,6 +5,14 @@
       "portraitPath": "res://RegentFemPortraits/card_portraits/regent/DefendRegent.png"
     },
     {
+      "cardType": "DefendNecrobinder",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/DefendNecrobinder.png"
+    },
+    {
+      "cardType": "Sow",
+      "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Sow.png"
+    },
+    {
       "cardType": "Venerate",
       "portraitPath": "res://RegentFemPortraits/card_portraits/regent/Venerate.png"
     },
@@ -164,7 +172,6 @@
   "ancientReplacements": [
     {
       "cardType": "SovereignBlade",
-      "normalPortrait": "res://RegentFemPortraits/card_portraits/regent/Terraforming.png",
       "ancientPortrait": "res://RegentFemPortraits/card_portraits/regent/SovereignBlade.png",
       "configKey": "SovereignBladeAncientStyle"
     }
