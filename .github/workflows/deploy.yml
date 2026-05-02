@@ -114,6 +114,12 @@ jobs:
           git config --local user.email "actions@github.com"
           git add RegentFemPortraits/card_portraits/
           git add RegentFemPortraits/card_replacements.json
+
+          if git diff --staged --quiet; then
+            echo "没有检测到变更，跳过提交"
+            exit 0
+          fi
+
           git commit -m "Add/Update card: ${{ github.event.inputs.card_name }}"
           git push
 
