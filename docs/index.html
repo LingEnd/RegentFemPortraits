@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RegentFemPortraits - 发布助手</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        input[type="text"],
+        input[type="url"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            width: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .btn-primary:disabled { background: #cbd5e0; cursor: not-allowed; transform: none; }
+        .status {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .status.success { background: #c6f6d5; color: #22543d; display: block; }
+        .status.error { background: #fed7d7; color: #742a2a; display: block; }
+        .status.info { background: #bee3f8; color: #2a4365; display: block; }
+        .token-hint {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        .token-hint code {
+            background: #e2e8f0;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .releases-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        .release-item {
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .release-item a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .release-item a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎴 RegentFemPortraits</h1>
+        <p class="subtitle">一键发布助手</p>
+
+        <div class="token-hint">
+            <strong>📝 如何获取 GitHub Token：</strong><br>
+            1. 访问 <a href="https://github.com/settings/tokens/new" target="_blank">Settings → Tokens (Classic)</a><br>
+            2. 勾选 <code>repo</code> 和 <code>workflow</code> 权限<br>
+            3. 点击 Generate token，复制保存
+        </div>
+
+        <form id="deployForm">
+            <div class="form-group">
+                <label for="token">GitHub Token</label>
+                <input type="password" id="token" placeholder="ghp_..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="cardName">卡牌名称</label>
+                <input type="text" id="cardName" placeholder="如 SovereignBlade" required>
+            </div>
+
+            <div class="form-group">
+                <label for="imageUrl">图片URL</label>
+                <input type="url" id="imageUrl" placeholder="https://example.com/image.png" required>
+            </div>
+
+            <div class="form-group">
+                <img id="imagePreview" class="preview-image">
+            </div>
+
+            <div class="form-group">
+                <label for="version">版本号</label>
+                <input type="text" id="version" placeholder="如 v1.0.1" required>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isAncient">
+                    <label for="isAncient" style="margin: 0; font-weight: 400;">先古样式卡牌</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                🚀 发布
+            </button>
+        </form>
+
+        <div id="status" class="status"></div>
+
+        <div class="releases-section">
+            <h2>📦 最新发布</h2>
+            <div id="releasesList">加载中...</div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('deployForm');
+        const imageUrlInput = document.getElementById('imageUrl');
+        const imagePreview = document.getElementById('imagePreview');
+        const statusDiv = document.getElementById('status');
+        const submitBtn = document.getElementById('submitBtn');
+
+        const REPO_OWNER = 'LingEnd';
+        const REPO_NAME = 'RegentFemPortraits';
+
+        imageUrlInput.addEventListener('change', function() {
+            if (this.value) {
+                imagePreview.src = this.value;
+                imagePreview.style.display = 'block';
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const token = document.getElementById('token').value;
+            const cardName = document.getElementById('cardName').value;
+            const imageUrl = document.getElementById('imageUrl').value;
+            const isAncient = document.getElementById('isAncient').checked;
+            const version = document.getElementById('version').value;
+
+            showStatus('正在触发发布...', 'info');
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/vnd.github+json',
+                        'Authorization': `Bearer ${token}`,
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    },
+                    body: JSON.stringify({
+                        ref: 'master',
+                        inputs: {
+                            card_name: cardName,
+                            image_url: imageUrl,
+                            is_ancient: isAncient.toString(),
+                            version_tag: version
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    showStatus('✅ 发布已触发！请查看 Actions 页面：<a href="https://github.com/' + REPO_OWNER + '/' + REPO_NAME + '/actions" target="_blank">前往查看</a>', 'success');
+                    form.reset();
+                    imagePreview.style.display = 'none';
+                } else {
+                    const error = await response.json();
+                    showStatus('❌ 错误：' + (error.message || '请求失败'), 'error');
+                }
+            } catch (err) {
+                showStatus('❌ 网络错误：' + err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showStatus(message, type) {
+            statusDiv.className = 'status ' + type;
+            statusDiv.innerHTML = message;
+        }
+
+        async function loadReleases() {
+            try {
+                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=5`);
+                const releases = await response.json();
+                const list = document.getElementById('releasesList');
+                
+                if (releases.length === 0) {
+                    list.innerHTML = '<p>暂无发布</p>';
+                    return;
+                }
+
+                list.innerHTML = releases.map(release => `
+                    <div class="release-item">
+                        <a href="${release.html_url}" target="_blank">${release.tag_name}</a>
+                        <p style="color: #718096; margin-top: 0.5rem; font-size: 0.875rem;">${new Date(release.created_at).toLocaleDateString('zh-CN')}</p>
+                    </div>
+                `).join('');
+            } catch {
+                document.getElementById('releasesList').innerHTML = '<p>加载失败</p>';
+            }
+        }
+
+        loadReleases();
+    </script>
+</body>
+</html>
