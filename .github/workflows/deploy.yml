@@ -12,6 +12,14 @@ on:
         description: '是否为先古样式'
         required: false
         default: 'false'
+      has_normal_portrait:
+        description: '是否同时指定普通样式卡图（仅先古样式时有效）'
+        required: false
+        default: 'false'
+      normal_portrait_url:
+        description: '普通样式卡图URL（可选）'
+        required: false
+        default: ''
       version_tag:
         description: '版本号 (如 v1.0.0)'
         required: true
@@ -25,6 +33,19 @@ jobs:
         with:
           token: ${{ github.token }}
 
+      - name: Validate version format
+        id: validate_version
+        run: |
+          VERSION="${{ github.event.inputs.version_tag }}"
+          echo "版本号: $VERSION"
+
+          if ! echo "$VERSION" | grep -qE '^v?[0-9]+\.[0-9]+\.[0-9]+'; then
+            echo "错误：版本号格式无效，应为如 v1.0.0 格式"
+            exit 1
+          fi
+
+          echo "version_valid=true" >> $GITHUB_OUTPUT
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -37,7 +58,7 @@ jobs:
           IMAGE_EXT=$(echo "${{ github.event.inputs.image_url }}" | grep -o '\.[a-zA-Z]*$' || echo '.png')
           IMAGE_PATH="RegentFemPortraits/card_portraits/regent/${{ github.event.inputs.card_name }}${IMAGE_EXT}"
 
-          echo "正在下载图片..."
+          echo "正在下载先古样式图片..."
           if ! curl -L --fail --retry 3 --retry-delay 2 \
               "${{ github.event.inputs.image_url }}" \
               -o "${IMAGE_PATH}"; then
@@ -60,18 +81,58 @@ jobs:
           echo "image_path=${IMAGE_PATH}" >> $GITHUB_OUTPUT
           echo "image_ext=${IMAGE_EXT}" >> $GITHUB_OUTPUT
 
+      - name: Download normal portrait (if specified)
+        id: download_normal
+        if: github.event.inputs.is_ancient == 'true' && github.event.inputs.has_normal_portrait == 'true'
+        run: |
+          if [ -z "${{ github.event.inputs.normal_portrait_url }}" ]; then
+            echo "未提供普通样式图片URL，跳过"
+            exit 0
+          fi
+
+          mkdir -p RegentFemPortraits/card_portraits/regent/
+          IMAGE_EXT=$(echo "${{ github.event.inputs.normal_portrait_url }}" | grep -o '\.[a-zA-Z]*$' || echo '.png')
+          IMAGE_PATH="RegentFemPortraits/card_portraits/regent/${{ github.event.inputs.card_name }}_normal${IMAGE_EXT}"
+
+          echo "正在下载普通样式图片..."
+          if ! curl -L --fail --retry 3 --retry-delay 2 \
+              "${{ github.event.inputs.normal_portrait_url }}" \
+              -o "${IMAGE_PATH}"; then
+            echo "错误：普通样式图片下载失败"
+            exit 1
+          fi
+
+          if [ ! -s "${IMAGE_PATH}" ]; then
+            echo "错误：下载的普通样式文件为空"
+            exit 1
+          fi
+
+          if ! file "${IMAGE_PATH}" | grep -qE 'image|JPEG|PNG|GIF|WebP'; then
+            echo "错误：下载的普通样式文件不是有效的图片格式"
+            rm -f "${IMAGE_PATH}"
+            exit 1
+          fi
+
+          echo "普通样式图片下载成功：${IMAGE_PATH}"
+          echo "normal_path=${IMAGE_PATH}" >> $GITHUB_OUTPUT
+
       - name: Update card_replacements.json
         run: |
           python3 << 'EOF'
           import json
           import os
+          import re
+
+          VERSION_TAG = '${{ github.event.inputs.version_tag }}'
 
           with open('RegentFemPortraits/card_replacements.json', 'r', encoding='utf-8') as f:
               config = json.load(f)
 
           card_name = '${{ github.event.inputs.card_name }}'
           is_ancient = '${{ github.event.inputs.is_ancient }}' == 'true'
+          has_normal = '${{ github.event.inputs.has_normal_portrait }}' == 'true'
           image_path = '${{ steps.download.outputs.image_path }}'
+          normal_path = '${{ steps.download_normal.outputs.normal_path }}' if is_ancient and has_normal else None
 
           if is_ancient:
               ancient_entry = None
@@ -82,10 +143,12 @@ jobs:
 
               if ancient_entry:
                   ancient_entry['ancientPortrait'] = image_path
+                  if normal_path:
+                      ancient_entry['normalPortrait'] = normal_path
               else:
                   config.setdefault('ancientReplacements', []).append({
                       'cardType': card_name,
-                      'normalPortrait': '',
+                      'normalPortrait': normal_path or '',
                       'ancientPortrait': image_path,
                       'configKey': card_name + 'AncientStyle'
                   })
@@ -106,6 +169,28 @@ jobs:
 
           with open('RegentFemPortraits/card_replacements.json', 'w', encoding='utf-8') as f:
               json.dump(config, f, ensure_ascii=False, indent=2)
+
+          print(f"card_replacements.json 已更新")
+          EOF
+
+      - name: Update RegentFemPortraits.json version
+        run: |
+          python3 << 'EOF'
+          import json
+          import re
+
+          VERSION_TAG = '${{ github.event.inputs.version_tag }}'
+
+          with open('RegentFemPortraits.json', 'r', encoding='utf-8') as f:
+              config = json.load(f)
+
+          old_version = config.get('version', 'unknown')
+          config['version'] = VERSION_TAG
+
+          with open('RegentFemPortraits.json', 'w', encoding='utf-8') as f:
+              json.dump(config, f, ensure_ascii=False, indent=2)
+
+          print(f"版本号更新: {old_version} -> {VERSION_TAG}")
           EOF
 
       - name: Commit changes
@@ -114,13 +199,14 @@ jobs:
           git config --local user.email "actions@github.com"
           git add RegentFemPortraits/card_portraits/
           git add RegentFemPortraits/card_replacements.json
+          git add RegentFemPortraits.json
 
           if git diff --staged --quiet; then
             echo "没有检测到变更，跳过提交"
             exit 0
           fi
 
-          git commit -m "Add/Update card: ${{ github.event.inputs.card_name }}"
+          git commit -m "Add/Update card: ${{ github.event.inputs.card_name }} (${{ github.event.inputs.version_tag }})"
           git push
 
       - name: Build Mod
@@ -145,4 +231,6 @@ jobs:
             更新内容：
             - 卡牌：${{ github.event.inputs.card_name }}
             - 类型：${{ github.event.inputs.is_ancient == 'true' && '先古样式' || '普通样式' }}
+            ${{ github.event.inputs.has_normal_portrait == 'true' && '- 包含普通样式卡图' || '' }}
+            - 版本：${{ github.event.inputs.version_tag }}
           generate_release_notes: false

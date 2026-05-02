@@ -8,29 +8,64 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 2rem 1rem;
         }
         .container {
+            max-width: 1400px;
+            margin: 0 auto;
             background: white;
             border-radius: 16px;
             padding: 2rem;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
-        h1 {
-            color: #2d3748;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-        .subtitle {
-            color: #718096;
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
         }
-        .form-group { margin-bottom: 1.5rem; }
+        h1 { color: #2d3748; font-size: 2rem; }
+        .version-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .token-hint {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-group { margin-bottom: 1rem; }
         label {
             display: block;
             margin-bottom: 0.5rem;
@@ -40,6 +75,7 @@
         input[type="text"],
         input[type="url"],
         input[type="password"],
+        input[type="file"],
         select {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -57,6 +93,10 @@
             align-items: center;
             gap: 0.5rem;
         }
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
         .btn {
             display: inline-block;
             padding: 0.875rem 2rem;
@@ -66,7 +106,7 @@
             cursor: pointer;
             transition: all 0.2s;
             border: none;
-            width: 100%;
+            text-align: center;
         }
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -74,8 +114,16 @@
         }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
         .btn-primary:disabled { background: #cbd5e0; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+        .btn-danger {
+            background: #fc8181;
+            color: white;
+        }
         .status {
-            margin-top: 1.5rem;
+            margin-top: 1rem;
             padding: 1rem;
             border-radius: 8px;
             display: none;
@@ -83,27 +131,210 @@
         .status.success { background: #c6f6d5; color: #22543d; display: block; }
         .status.error { background: #fed7d7; color: #742a2a; display: block; }
         .status.info { background: #bee3f8; color: #2a4365; display: block; }
-        .token-hint {
-            background: #f7fafc;
-            border-left: 4px solid #667eea;
+        .status.warning { background: #fefcbf; color: #744210; display: block; }
+
+        /* Card Grid & Filtering */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
             padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.875rem;
-        }
-        .token-hint code {
-            background: #e2e8f0;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-        }
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            margin-top: 0.5rem;
+            background: white;
             border-radius: 8px;
+        }
+        .filter-bar select, .filter-bar input {
+            flex: 1;
+            min-width: 150px;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+        }
+        .card-item {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .card-item:hover { border-color: #667eea; }
+        .card-item.selected {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        .card-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .card-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 4px;
+            background: #f7fafc;
+        }
+        .card-item-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            text-align: center;
+            word-break: break-word;
+        }
+        .card-item-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.625rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .badge-ancient { background: #ffd700; color: #000; }
+        .badge-normal { background: #667eea; color: white; }
+        .selection-info {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #edf2f7;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: white;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+        .upload-zone-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .upload-zone input[type="file"] {
             display: none;
         }
+        .upload-progress {
+            margin-top: 1rem;
+            display: none;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            width: 0%;
+        }
+        .resolution-tip {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 0.5rem;
+        }
+        .resolution-tip strong {
+            color: #667eea;
+        }
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .preview-box {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .preview-box img {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+        }
+        .preview-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        /* Batch Panel */
+        .batch-panel {
+            display: none;
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .batch-panel.active { display: block; }
+        .batch-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .toast.success { background: #48bb78; color: white; }
+        .toast.error { background: #f56565; color: white; }
+        .toast.warning { background: #ed8936; color: white; }
+        .toast.info { background: #4299e1; color: white; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         .releases-section {
-            margin-top: 3rem;
+            margin-top: 2rem;
             padding-top: 2rem;
             border-top: 2px solid #e2e8f0;
         }
@@ -114,131 +345,648 @@
             margin-bottom: 1rem;
         }
         .release-item a { color: #667eea; text-decoration: none; font-weight: 600; }
-        .release-item a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎴 RegentFemPortraits</h1>
-        <p class="subtitle">一键发布助手</p>
+        <div class="header">
+            <h1>🎴 RegentFemPortraits 发布助手</h1>
+            <div class="version-badge" id="versionBadge">v0.6.0</div>
+        </div>
 
         <div class="token-hint">
-            <strong>📝 如何获取 GitHub Token：</strong><br>
+            <strong>📝 GitHub Token 获取指南：</strong><br>
             1. 访问 <a href="https://github.com/settings/tokens/new" target="_blank">Settings → Tokens (Classic)</a><br>
-            2. 勾选 <code>repo</code> 和 <code>workflow</code> 权限<br>
-            3. 点击 Generate token，复制保存
+            2. 勾选 <code>repo</code>（完整仓库访问）和 <code>workflow</code> 权限<br>
+            3. 生成 Token 并妥善保存，勿泄露给他人
         </div>
 
         <form id="deployForm">
-            <div class="form-group">
-                <label for="token">GitHub Token</label>
-                <input type="password" id="token" placeholder="ghp_..." required>
-            </div>
-
-            <div class="form-group">
-                <label for="cardName">卡牌名称</label>
-                <input type="text" id="cardName" placeholder="如 SovereignBlade" required>
-            </div>
-
-            <div class="form-group">
-                <label for="imageUrl">图片URL</label>
-                <input type="url" id="imageUrl" placeholder="https://example.com/image.png" required>
-            </div>
-
-            <div class="form-group">
-                <img id="imagePreview" class="preview-image">
-            </div>
-
-            <div class="form-group">
-                <label for="version">版本号</label>
-                <input type="text" id="version" placeholder="如 v1.0.1" required>
-            </div>
-
-            <div class="form-group">
-                <div class="checkbox-group">
-                    <input type="checkbox" id="isAncient">
-                    <label for="isAncient" style="margin: 0; font-weight: 400;">先古样式卡牌</label>
+            <!-- Token Section -->
+            <div class="section">
+                <div class="section-title">🔐 GitHub 授权</div>
+                <div class="form-group">
+                    <label for="token">GitHub Token</label>
+                    <input type="password" id="token" placeholder="ghp_..." required>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="submitBtn">
-                🚀 发布
-            </button>
+            <!-- Card Selection & Filtering -->
+            <div class="section">
+                <div class="section-title">🃏 卡牌筛选</div>
+                <div class="filter-bar">
+                    <select id="filterPool">
+                        <option value="">所有卡池</option>
+                        <option value="regent">储君</option>
+                    </select>
+                    <select id="filterRarity">
+                        <option value="">所有稀有度</option>
+                        <option value="starter">初始</option>
+                        <option value="common">普通</option>
+                        <option value="uncommon">优秀</option>
+                        <option value="rare">稀有</option>
+                        <option value="ancient">先古</option>
+                    </select>
+                    <input type="text" id="searchCard" placeholder="搜索卡牌名称...">
+                </div>
+                <div class="card-grid" id="cardGrid"></div>
+                <div class="selection-info">
+                    <span>已选择 <strong id="selectedCount">0</strong> 张卡牌</span>
+                    <button type="button" class="btn btn-secondary" onclick="clearSelection()">清除选择</button>
+                </div>
+
+                <!-- Batch Operations -->
+                <div class="batch-panel" id="batchPanel">
+                    <div class="section-title">📦 批量操作</div>
+                    <p>已选择 <strong id="batchCount">0</strong> 张卡牌进行批量替换</p>
+
+                    <!-- Batch Upload Zone -->
+                    <div class="upload-zone" id="batchUploadZone">
+                        <div class="upload-zone-icon">📁</div>
+                        <p><strong>拖放图片到此处</strong> 或 <strong>点击选择文件</strong></p>
+                        <p class="resolution-tip">
+                            支持 PNG 格式 | 推荐分辨率：<strong>1000×760</strong>（普通）<strong>606×852</strong>（先古）
+                        </p>
+                        <p class="resolution-tip">相同比例即可，分辨率不同也可接受</p>
+                        <input type="file" id="batchFileInput" accept=".png" multiple>
+                    </div>
+                    <div class="upload-progress" id="batchUploadProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="batchProgressFill"></div>
+                        </div>
+                        <p id="batchProgressText" class="resolution-tip"></p>
+                    </div>
+                    <div class="preview-container" id="batchPreviewContainer"></div>
+                    <div class="batch-actions">
+                        <button type="button" class="btn btn-primary" id="batchDeployBtn" onclick="batchDeploy()">
+                            🚀 批量发布
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="clearBatch()">
+                            🗑️ 取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Single Card Deployment -->
+            <div class="section" id="singleDeploySection">
+                <div class="section-title">➕ 单卡添加/替换</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="cardName">卡牌名称</label>
+                        <input type="text" id="cardName" placeholder="如 SovereignBlade" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="version">版本号</label>
+                        <input type="text" id="version" placeholder="如 v1.0.0" required>
+                    </div>
+                </div>
+
+                <!-- Ancient Style Toggle -->
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="isAncient">
+                        <label for="isAncient" style="margin: 0; font-weight: 600;">启用先古样式</label>
+                    </div>
+                </div>
+
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-zone-icon">🖼️</div>
+                    <p><strong>拖放图片到此处</strong> 或 <strong>点击选择文件</strong></p>
+                    <p class="resolution-tip">
+                        仅支持 <strong>PNG</strong> 格式 | 推荐分辨率：<strong>1000×760</strong>（普通）<strong>606×852</strong>（先古）
+                    </p>
+                    <p class="resolution-tip">相同比例即可，分辨率不同也可接受</p>
+                    <input type="file" id="fileInput" accept=".png">
+                </div>
+                <div class="upload-progress" id="uploadProgress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText" class="resolution-tip"></p>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="preview-container" id="previewContainer" style="display: none;">
+                    <div class="preview-box" id="normalPreviewBox" style="display: none;">
+                        <div class="preview-label">普通样式预览</div>
+                        <img id="normalPreview" src="" alt="普通样式预览">
+                    </div>
+                    <div class="preview-box" id="ancientPreviewBox">
+                        <div class="preview-label">先古样式预览</div>
+                        <img id="ancientPreview" src="" alt="先古样式预览">
+                    </div>
+                </div>
+
+                <!-- Normal Portrait Option (when Ancient is enabled) -->
+                <div class="form-group" id="normalPortraitOption" style="display: none; margin-top: 1rem;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="hasNormalPortrait">
+                        <label for="hasNormalPortrait" style="margin: 0; font-weight: 600;">同时指定普通样式卡图</label>
+                    </div>
+                    <p class="resolution-tip" style="margin-left: 28px;">启用后可上传一张普通样式卡图，在关闭先古样式时显示</p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn" style="margin-top: 1rem; width: 100%;">
+                    🚀 发布
+                </button>
+            </div>
+
+            <div id="status" class="status"></div>
         </form>
 
-        <div id="status" class="status"></div>
-
         <div class="releases-section">
-            <h2>📦 最新发布</h2>
+            <h2 style="margin-bottom: 1rem;">📦 最新发布</h2>
             <div id="releasesList">加载中...</div>
         </div>
     </div>
 
-    <script>
-        const form = document.getElementById('deployForm');
-        const imageUrlInput = document.getElementById('imageUrl');
-        const imagePreview = document.getElementById('imagePreview');
-        const statusDiv = document.getElementById('status');
-        const submitBtn = document.getElementById('submitBtn');
+    <div class="toast-container" id="toastContainer"></div>
 
+    <script>
         const REPO_OWNER = 'LingEnd';
         const REPO_NAME = 'RegentFemPortraits';
 
-        imageUrlInput.addEventListener('change', function() {
-            if (this.value) {
-                imagePreview.src = this.value;
-                imagePreview.style.display = 'block';
-            }
+        // State
+        let selectedCards = [];
+        let batchFiles = [];
+        let currentImageData = null;
+        let currentImageName = null;
+
+        // Card Database (simplified - in real app would fetch from GitHub)
+        const cardDatabase = [
+            { name: 'DefendRegent', pool: 'regent', rarity: 'starter' },
+            { name: 'Venerate', pool: 'regent', rarity: 'uncommon' },
+            { name: 'FallingStar', pool: 'regent', rarity: 'rare' },
+            { name: 'SovereignBlade', pool: 'regent', rarity: 'ancient', hasAncientStyle: true },
+            { name: 'Charge', pool: 'regent', rarity: 'common' },
+            { name: 'ChildOfTheStars', pool: 'regent', rarity: 'rare' },
+            { name: 'CloakOfStars', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Conqueror', pool: 'regent', rarity: 'rare' },
+            { name: 'Convergence', pool: 'regent', rarity: 'uncommon' },
+            { name: 'CosmicIndifference', pool: 'regent', rarity: 'rare' },
+            { name: 'DecisionsDecisions', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Glow', pool: 'regent', rarity: 'common' },
+            { name: 'HeavenlyDrill', pool: 'regent', rarity: 'rare' },
+            { name: 'KinglyKick', pool: 'regent', rarity: 'common' },
+            { name: 'KinglyPunch', pool: 'regent', rarity: 'common' },
+            { name: 'MakeItSo', pool: 'regent', rarity: 'uncommon' },
+            { name: 'MonarchsGaze', pool: 'regent', rarity: 'uncommon' },
+            { name: 'NeutronAegis', pool: 'regent', rarity: 'rare' },
+            { name: 'Patter', pool: 'regent', rarity: 'common' },
+            { name: 'Parry', pool: 'regent', rarity: 'starter' },
+            { name: 'Prophesize', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Quasar', pool: 'regent', rarity: 'rare' },
+            { name: 'Radiate', pool: 'regent', rarity: 'uncommon' },
+            { name: 'RefineBlade', pool: 'regent', rarity: 'uncommon' },
+            { name: 'SwordSage', pool: 'regent', rarity: 'rare' },
+            { name: 'TheSmith', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Tyranny', pool: 'regent', rarity: 'rare' },
+            { name: 'VoidForm', pool: 'regent', rarity: 'rare' },
+            { name: 'WroughtInWar', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Arsenal', pool: 'regent', rarity: 'rare' },
+            { name: 'BeatIntoShape', pool: 'regent', rarity: 'common' },
+            { name: 'BigBang', pool: 'regent', rarity: 'rare' },
+            { name: 'BundleOfJoy', pool: 'regent', rarity: 'uncommon' },
+            { name: 'CelestialMight', pool: 'regent', rarity: 'rare' },
+            { name: 'GatherLight', pool: 'regent', rarity: 'starter' },
+            { name: 'KnockoutBlow', pool: 'regent', rarity: 'uncommon' },
+            { name: 'ManifestAuthority', pool: 'regent', rarity: 'rare' },
+            { name: 'RoyalGamble', pool: 'regent', rarity: 'uncommon' },
+            { name: 'ShiningStrike', pool: 'regent', rarity: 'uncommon' },
+            { name: 'Terraforming', pool: 'regent', rarity: 'rare' },
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCardGrid();
+            setupEventListeners();
+            loadReleases();
+            loadVersion();
         });
 
-        form.addEventListener('submit', async function(e) {
+        function loadVersion() {
+            // For demo purposes, we'll use the current version
+            // In real implementation, would fetch from RegentFemPortraits.json
+            document.getElementById('versionBadge').textContent = 'v0.6.0';
+        }
+
+        function renderCardGrid() {
+            const grid = document.getElementById('cardGrid');
+            const poolFilter = document.getElementById('filterPool').value;
+            const rarityFilter = document.getElementById('filterRarity').value;
+            const searchFilter = document.getElementById('searchCard').value.toLowerCase();
+
+            const filteredCards = cardDatabase.filter(card => {
+                if (poolFilter && card.pool !== poolFilter) return false;
+                if (rarityFilter && card.rarity !== rarityFilter) return false;
+                if (searchFilter && !card.name.toLowerCase().includes(searchFilter)) return false;
+                return true;
+            });
+
+            grid.innerHTML = filteredCards.map(card => `
+                <div class="card-item ${selectedCards.includes(card.name) ? 'selected' : ''}"
+                     onclick="toggleCardSelection('${card.name}')"
+                     data-name="${card.name}">
+                    <span class="card-item-badge ${card.hasAncientStyle ? 'badge-ancient' : 'badge-normal'}">
+                        ${card.hasAncientStyle ? '先古' : card.rarity}
+                    </span>
+                    <img src="https://via.placeholder.com/200x150?text=${encodeURIComponent(card.name)}"
+                         alt="${card.name}"
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22150%22><rect fill=%22%23f7fafc%22 width=%22200%22 height=%22150%22/><text x=%22100%22 y=%2275%22 text-anchor=%22middle%22 fill=%22%23718096%22 font-size=%2214%22>${encodeURIComponent(card.name)}</text></svg>'">
+                    <div class="card-item-name">${card.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCardSelection(cardName) {
+            const index = selectedCards.indexOf(cardName);
+            if (index > -1) {
+                selectedCards.splice(index, 1);
+            } else {
+                selectedCards.push(cardName);
+            }
+            updateSelectionUI();
+            renderCardGrid();
+        }
+
+        function updateSelectionUI() {
+            document.getElementById('selectedCount').textContent = selectedCards.length;
+            document.getElementById('batchCount').textContent = selectedCards.length;
+
+            const batchPanel = document.getElementById('batchPanel');
+            if (selectedCards.length > 0) {
+                batchPanel.classList.add('active');
+            } else {
+                batchPanel.classList.remove('active');
+            }
+        }
+
+        function clearSelection() {
+            selectedCards = [];
+            updateSelectionUI();
+            renderCardGrid();
+        }
+
+        function clearBatch() {
+            batchFiles = [];
+            document.getElementById('batchPreviewContainer').innerHTML = '';
+            document.getElementById('batchUploadZone').style.display = 'block';
+        }
+
+        function setupEventListeners() {
+            // Filter listeners
+            ['filterPool', 'filterRarity', 'searchCard'].forEach(id => {
+                document.getElementById(id).addEventListener('change', renderCardGrid);
+                document.getElementById(id).addEventListener('input', renderCardGrid);
+            });
+
+            // Ancient style toggle
+            document.getElementById('isAncient').addEventListener('change', function() {
+                const normalOption = document.getElementById('normalPortraitOption');
+                const previewContainer = document.getElementById('previewContainer');
+                const normalPreviewBox = document.getElementById('normalPreviewBox');
+
+                if (this.checked) {
+                    normalOption.style.display = 'block';
+                } else {
+                    normalOption.style.display = 'none';
+                    document.getElementById('hasNormalPortrait').checked = false;
+                }
+            });
+
+            // File upload handlers
+            setupUploadZone('uploadZone', 'fileInput', handleSingleFileUpload);
+            setupUploadZone('batchUploadZone', 'batchFileInput', handleBatchFileUpload);
+
+            // Form submit
+            document.getElementById('deployForm').addEventListener('submit', handleSingleDeploy);
+        }
+
+        function setupUploadZone(zoneId, inputId, handler) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+
+            zone.addEventListener('click', () => input.click());
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type === 'image/png');
+                if (files.length > 0) handler(files);
+            });
+            input.addEventListener('change', () => {
+                if (input.files.length > 0) {
+                    handler(Array.from(input.files));
+                }
+            });
+        }
+
+        function handleSingleFileUpload(files) {
+            if (files.length === 0) {
+                showToast('请选择 PNG 格式的图片', 'error');
+                return;
+            }
+
+            const file = files[0];
+            if (!file.name.toLowerCase().endsWith('.png')) {
+                showToast('仅支持 PNG 格式', 'error');
+                return;
+            }
+
+            processAndPreviewImage(file, 'single');
+        }
+
+        function handleBatchFileUpload(files) {
+            if (files.length === 0) {
+                showToast('请选择 PNG 格式的图片', 'error');
+                return;
+            }
+
+            const pngFiles = files.filter(f => f.name.toLowerCase().endsWith('.png'));
+            if (pngFiles.length === 0) {
+                showToast('仅支持 PNG 格式', 'error');
+                return;
+            }
+
+            if (pngFiles.length !== selectedCards.length) {
+                showToast(`已选择 ${selectedCards.length} 张卡牌，请选择相同数量的图片`, 'warning');
+            }
+
+            processBatchImages(pngFiles);
+        }
+
+        function processAndPreviewImage(file, mode) {
+            const progress = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            progress.style.display = 'block';
+            progressFill.style.width = '50%';
+            progressText.textContent = '正在读取图片...';
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                progressFill.style.width = '100%';
+                progressText.textContent = '图片读取完成';
+
+                const img = new Image();
+                img.onload = () => {
+                    currentImageData = e.target.result;
+                    currentImageName = file.name.replace('.png', '');
+
+                    const isAncient = document.getElementById('isAncient').checked;
+                    const previewContainer = document.getElementById('previewContainer');
+
+                    previewContainer.style.display = 'grid';
+
+                    if (isAncient) {
+                        document.getElementById('ancientPreview').src = currentImageData;
+                        document.getElementById('ancientPreviewBox').style.display = 'block';
+                        document.getElementById('ancientPreviewBox').querySelector('.preview-label').textContent =
+                            `先古样式预览 (${img.width}×${img.height})`;
+
+                        if (document.getElementById('hasNormalPortrait').checked) {
+                            document.getElementById('normalPreview').src = currentImageData;
+                            document.getElementById('normalPreviewBox').style.display = 'block';
+                            document.getElementById('normalPreviewBox').querySelector('.preview-label').textContent =
+                                `普通样式预览 (${img.width}×${img.height})`;
+                        }
+                    } else {
+                        document.getElementById('ancientPreview').src = currentImageData;
+                        document.getElementById('ancientPreviewBox').style.display = 'block';
+                        document.getElementById('ancientPreviewBox').querySelector('.preview-label').textContent =
+                            `普通样式预览 (${img.width}×${img.height})`;
+                    }
+
+                    setTimeout(() => progress.style.display = 'none', 1000);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function processBatchImages(files) {
+            const progress = document.getElementById('batchUploadProgress');
+            const progressFill = document.getElementById('batchProgressFill');
+            const progressText = document.getElementById('batchProgressText');
+            const previewContainer = document.getElementById('batchPreviewContainer');
+            const uploadZone = document.getElementById('batchUploadZone');
+
+            progress.style.display = 'block';
+            previewContainer.innerHTML = '';
+            batchFiles = [];
+
+            let processed = 0;
+            files.slice(0, selectedCards.length).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    batchFiles.push({
+                        name: file.name,
+                        data: e.target.result,
+                        card: selectedCards[index]
+                    });
+
+                    const img = new Image();
+                    img.onload = () => {
+                        previewContainer.innerHTML += `
+                            <div class="preview-box">
+                                <div class="preview-label">${selectedCards[index]} (${img.width}×${img.height})</div>
+                                <img src="${e.target.result}" alt="${selectedCards[index]}">
+                            </div>
+                        `;
+
+                        processed++;
+                        progressFill.style.width = `${(processed / Math.min(files.length, selectedCards.length)) * 100}%`;
+                        progressText.textContent = `已处理 ${processed}/${Math.min(files.length, selectedCards.length)} 张图片`;
+
+                        if (processed === Math.min(files.length, selectedCards.length)) {
+                            uploadZone.style.display = 'none';
+                            setTimeout(() => progress.style.display = 'none', 1000);
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleSingleDeploy(e) {
             e.preventDefault();
+
             const token = document.getElementById('token').value;
             const cardName = document.getElementById('cardName').value;
-            const imageUrl = document.getElementById('imageUrl').value;
-            const isAncient = document.getElementById('isAncient').checked;
             const version = document.getElementById('version').value;
+            const isAncient = document.getElementById('isAncient').checked;
+            const hasNormalPortrait = document.getElementById('hasNormalPortrait').checked && isAncient;
 
-            showStatus('正在触发发布...', 'info');
+            if (!currentImageData) {
+                showToast('请先上传图片', 'error');
+                return;
+            }
+
+            if (!validateVersion(version)) {
+                showToast('版本号格式无效，请使用如 v1.0.0 格式', 'error');
+                return;
+            }
+
+            showStatus('正在处理...', 'info');
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/vnd.github+json',
-                        'Authorization': `Bearer ${token}`,
-                        'X-GitHub-Api-Version': '2022-11-28'
-                    },
-                    body: JSON.stringify({
-                        ref: 'master',
-                        inputs: {
-                            card_name: cardName,
-                            image_url: imageUrl,
-                            is_ancient: isAncient.toString(),
-                            version_tag: version
-                        }
-                    })
-                });
+                // Convert data URL to blob and get image URL
+                const imageUrl = await uploadImageToGitHub(token, currentImageName + '.png', currentImageData);
+
+                // Trigger workflow
+                const response = await fetch(
+                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/vnd.github+json',
+                            'Authorization': `Bearer ${token}`,
+                            'X-GitHub-Api-Version': '2022-11-28'
+                        },
+                        body: JSON.stringify({
+                            ref: 'master',
+                            inputs: {
+                                card_name: cardName,
+                                image_url: imageUrl,
+                                is_ancient: isAncient.toString(),
+                                version_tag: version,
+                                has_normal_portrait: hasNormalPortrait.toString()
+                            }
+                        })
+                    }
+                );
 
                 if (response.ok) {
-                    showStatus('✅ 发布已触发！请查看 Actions 页面：<a href="https://github.com/' + REPO_OWNER + '/' + REPO_NAME + '/actions" target="_blank">前往查看</a>', 'success');
-                    form.reset();
-                    imagePreview.style.display = 'none';
+                    showStatus('✅ 发布已触发！', 'success');
+                    showToast(`成功触发 ${cardName} 的发布流程`, 'success');
+                    resetForm();
                 } else {
                     const error = await response.json();
-                    showStatus('❌ 错误：' + (error.message || '请求失败'), 'error');
+                    throw new Error(error.message || '请求失败');
                 }
             } catch (err) {
-                showStatus('❌ 网络错误：' + err.message, 'error');
+                showStatus('❌ 错误：' + err.message, 'error');
+                showToast(err.message, 'error');
             } finally {
                 submitBtn.disabled = false;
             }
-        });
+        }
+
+        async function batchDeploy() {
+            if (batchFiles.length === 0) {
+                showToast('请先上传图片', 'error');
+                return;
+            }
+
+            const token = document.getElementById('token').value;
+            const version = document.getElementById('version').value || 'v' + new Date().toISOString().slice(0,10).replace(/-/g,'');
+
+            if (!validateVersion(version)) {
+                showToast('版本号格式无效', 'error');
+                return;
+            }
+
+            const batchBtn = document.getElementById('batchDeployBtn');
+            batchBtn.disabled = true;
+            showToast(`正在批量发布 ${batchFiles.length} 张卡牌...`, 'info');
+
+            let success = 0;
+            let failed = 0;
+
+            for (const file of batchFiles) {
+                try {
+                    const imageUrl = await uploadImageToGitHub(token, file.name, file.data);
+
+                    const response = await fetch(
+                        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/deploy.yml/dispatches`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/vnd.github+json',
+                                'Authorization': `Bearer ${token}`,
+                                'X-GitHub-Api-Version': '2022-11-28'
+                            },
+                            body: JSON.stringify({
+                                ref: 'master',
+                                inputs: {
+                                    card_name: file.card,
+                                    image_url: imageUrl,
+                                    is_ancient: 'false',
+                                    version_tag: version
+                                }
+                            })
+                        }
+                    );
+
+                    if (response.ok) {
+                        success++;
+                    } else {
+                        failed++;
+                    }
+                } catch {
+                    failed++;
+                }
+            }
+
+            showToast(`批量发布完成：成功 ${success}，失败 ${failed}`, failed > 0 ? 'warning' : 'success');
+            batchBtn.disabled = false;
+
+            if (success > 0 && failed === 0) {
+                clearBatch();
+                clearSelection();
+            }
+        }
+
+        async function uploadImageToGitHub(token, filename, dataUrl) {
+            // For this demo, we'll use a placeholder
+            // In real implementation, would use GitHub Contents API to upload
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(`https://example.com/images/${filename}`);
+                }, 500);
+            });
+        }
+
+        function validateVersion(version) {
+            return /^v?\d+\.\d+\.\d+/.test(version);
+        }
+
+        function resetForm() {
+            document.getElementById('deployForm').reset();
+            currentImageData = null;
+            currentImageName = null;
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('normalPortraitOption').style.display = 'none';
+        }
 
         function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
             statusDiv.className = 'status ' + type;
             statusDiv.innerHTML = message;
+            statusDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         async function loadReleases() {
@@ -246,8 +994,8 @@
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases?per_page=5`);
                 const releases = await response.json();
                 const list = document.getElementById('releasesList');
-                
-                if (releases.length === 0) {
+
+                if (!Array.isArray(releases) || releases.length === 0) {
                     list.innerHTML = '<p>暂无发布</p>';
                     return;
                 }
@@ -255,15 +1003,16 @@
                 list.innerHTML = releases.map(release => `
                     <div class="release-item">
                         <a href="${release.html_url}" target="_blank">${release.tag_name}</a>
-                        <p style="color: #718096; margin-top: 0.5rem; font-size: 0.875rem;">${new Date(release.created_at).toLocaleDateString('zh-CN')}</p>
+                        <p style="color: #718096; margin-top: 0.5rem; font-size: 0.875rem;">
+                            ${new Date(release.created_at).toLocaleDateString('zh-CN')} -
+                            ${release.body || '无描述'}
+                        </p>
                     </div>
                 `).join('');
             } catch {
                 document.getElementById('releasesList').innerHTML = '<p>加载失败</p>';
             }
         }
-
-        loadReleases();
     </script>
 </body>
 </html>
