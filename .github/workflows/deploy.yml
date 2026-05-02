@@ -1,0 +1,122 @@
+name: Deploy Mod
+on:
+  workflow_dispatch:
+    inputs:
+      card_name:
+        description: '卡牌名称 (如 SovereignBlade)'
+        required: true
+      image_url:
+        description: '图片URL (支持直链)'
+        required: true
+      is_ancient:
+        description: '是否为先古样式'
+        required: false
+        default: 'false'
+      version_tag:
+        description: '版本号 (如 v1.0.0)'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Download image
+        id: download
+        run: |
+          mkdir -p RegentFemPortraits/card_portraits/regent/
+          IMAGE_EXT=$(echo "${{ github.event.inputs.image_url }}" | grep -o '\.[a-zA-Z]*$' || echo '.png')
+          IMAGE_PATH="RegentFemPortraits/card_portraits/regent/${{ github.event.inputs.card_name }}${IMAGE_EXT}"
+          curl -L "${{ github.event.inputs.image_url }}" -o "${IMAGE_PATH}"
+          echo "image_path=${IMAGE_PATH}" >> $GITHUB_OUTPUT
+          echo "image_ext=${IMAGE_EXT}" >> $GITHUB_OUTPUT
+
+      - name: Update card_replacements.json
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+
+          with open('RegentFemPortraits/card_replacements.json', 'r', encoding='utf-8') as f:
+              config = json.load(f)
+
+          card_name = '${{ github.event.inputs.card_name }}'
+          is_ancient = '${{ github.event.inputs.is_ancient }}' == 'true'
+          image_path = '${{ steps.download.outputs.image_path }}'
+
+          if is_ancient:
+              ancient_entry = None
+              for entry in config.get('ancientReplacements', []):
+                  if entry.get('cardType') == card_name:
+                      ancient_entry = entry
+                      break
+
+              if ancient_entry:
+                  ancient_entry['ancientPortrait'] = image_path
+              else:
+                  config.setdefault('ancientReplacements', []).append({
+                      'cardType': card_name,
+                      'normalPortrait': '',
+                      'ancientPortrait': image_path,
+                      'configKey': card_name + 'AncientStyle'
+                  })
+          else:
+              normal_entry = None
+              for entry in config.get('normalReplacements', []):
+                  if entry.get('cardType') == card_name:
+                      normal_entry = entry
+                      break
+
+              if normal_entry:
+                  normal_entry['portraitPath'] = image_path
+              else:
+                  config.setdefault('normalReplacements', []).append({
+                      'cardType': card_name,
+                      'portraitPath': image_path
+                  })
+
+          with open('RegentFemPortraits/card_replacements.json', 'w', encoding='utf-8') as f:
+              json.dump(config, f, ensure_ascii=False, indent=2)
+          EOF
+
+      - name: Commit changes
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git add RegentFemPortraits/card_portraits/
+          git add RegentFemPortraits/card_replacements.json
+          git commit -m "Add/Update card: ${{ github.event.inputs.card_name }}"
+          git push
+
+      - name: Build Mod
+        run: dotnet build --configuration Release
+
+      - name: Package Mod
+        id: package
+        run: |
+          VERSION="${{ github.event.inputs.version_tag }}"
+          VERSION_CLEAN=${VERSION#v}
+          zip -r "RegentFemPortraits-${VERSION}.zip" ./RegentFemPortraits/
+          echo "filename=RegentFemPortraits-${VERSION}.zip" >> $GITHUB_OUTPUT
+          echo "version=${VERSION_CLEAN}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: RegentFemPortraits-${{ github.event.inputs.version_tag }}.zip
+          tag_name: ${{ github.event.inputs.version_tag }}
+          name: Release ${{ github.event.inputs.version_tag }}
+          body: |
+            更新内容：
+            - 卡牌：${{ github.event.inputs.card_name }}
+            - 类型：${{ github.event.inputs.is_ancient == 'true' && '先古样式' || '普通样式' }}
+          generate_release_notes: false
