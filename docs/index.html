@@ -28,6 +28,23 @@
             padding-bottom: 1rem;
             border-bottom: 2px solid #e2e8f0;
         }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-links a {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: #f7fafc;
+            color: #2d3748;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .nav-links a:hover {
+            background: #667eea;
+            color: white;
+        }
         h1 { color: #2d3748; font-size: 2rem; }
         .version-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -351,6 +368,10 @@
     <div class="container">
         <div class="header">
             <h1>🎴 RegentFemPortraits 发布助手</h1>
+            <div class="nav-links">
+                <a href="index.html">发布助手</a>
+                <a href="preview.html">卡牌预览</a>
+            </div>
             <div class="version-badge" id="versionBadge">v0.6.0</div>
         </div>
 
