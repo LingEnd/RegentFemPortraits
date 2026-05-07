@@ -3,13 +3,11 @@ using System;
 using Godot;
 using HarmonyLib;
 
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 
 namespace RegentFemPortraits.RegentFemPortraitsCode;
 
-/// <summary>
-/// 拦截 <see cref="NCard"/> 的Reload方法，为配置为先古样式的卡牌应用先古卡牌视觉效果。
-/// </summary>
 [HarmonyPatch(typeof(NCard), "Reload")]
 public static class AncientCardStylePatch
 {
@@ -46,6 +44,7 @@ public static class AncientCardStylePatch
     {
         TextureRect portrait = card.GetNode<TextureRect>("%Portrait");
         TextureRect ancientPortrait = card.GetNode<TextureRect>("%AncientPortrait");
+        TextureRect ancientTextBg = card.GetNode<TextureRect>("%AncientTextBg");
         CanvasGroup portraitCanvasGroup = card.GetNode<CanvasGroup>("%PortraitCanvasGroup");
 
         AncientReplacementEntry? ancientConfig = CardReplacementConfig.GetAncientConfig(cardTypeName);
@@ -65,7 +64,7 @@ public static class AncientCardStylePatch
 
         ancientPortrait.Visible = true;
         card.GetNode<TextureRect>("%AncientBorder").Visible = true;
-        card.GetNode<TextureRect>("%AncientTextBg").Visible = true;
+        ancientTextBg.Visible = true;
         card.GetNode<Control>("%AncientBanner").Visible = true;
         card.GetNode<Control>("%TitleBanner").Visible = false;
 
@@ -73,6 +72,62 @@ public static class AncientCardStylePatch
 
         ancientPortrait.ExpandMode = (TextureRect.ExpandModeEnum)1;
         ancientPortrait.StretchMode = (TextureRect.StretchModeEnum)5;
+
+        // 获取卡牌类型并应用正确的纹理
+        object? model = card.Model;
+        if (model != null)
+        {
+            var typeProperty = model.GetType().GetProperty("Type");
+            if (typeProperty != null)
+            {
+                var typeValue = typeProperty.GetValue(model);
+                if (typeValue != null)
+                {
+                    CardType cardType = (CardType)typeValue;
+                    ApplyAncientTextBg(cardType, ancientTextBg, cardTypeName);
+                }
+            }
+        }
+    }
+
+    private static void ApplyAncientTextBg(CardType cardType, TextureRect ancientTextBg, string cardTypeName)
+    {
+        if (ancientTextBg == null)
+        {
+            return;
+        }
+
+        string cardTypeStr = cardType switch
+        {
+            CardType.None => "skill",
+            CardType.Status => "skill",
+            CardType.Curse => "skill",
+            CardType.Quest => "skill",
+            CardType.Attack => "attack",
+            CardType.Skill => "skill",
+            CardType.Power => "power",
+            _ => "skill"
+        };
+
+        string textBgPath = $"res://images/atlases/compressed.sprites/card_template/ancient_card_text_bg_{cardTypeStr}.tres";
+
+        if (ResourceLoader.Exists(textBgPath))
+        {
+            Texture2D? textBgTexture = ResourceLoader.Load<Texture2D>(textBgPath, null, ResourceLoader.CacheMode.Ignore);
+            if (textBgTexture != null)
+            {
+                ancientTextBg.Texture = textBgTexture;
+                MainFile.Logger.Debug($"[AncientStyle] Applied {cardTypeStr} text bg for {cardTypeName}");
+            }
+            else
+            {
+                MainFile.Logger.Error($"[AncientStyle] Failed to load texture: {textBgPath}");
+            }
+        }
+        else
+        {
+            MainFile.Logger.Error($"[AncientStyle] Texture not found: {textBgPath}");
+        }
     }
 
     private static void ApplyCanvasGroupMaskMaterial(CanvasGroup canvasGroup)
